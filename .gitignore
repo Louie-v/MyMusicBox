@@ -1,0 +1,8 @@
+
+*.[oa]
+*.pyc
+.idea/*/
+.idea/
+*.mp3
+music/*
+*.db

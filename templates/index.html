@@ -1,0 +1,353 @@
+<!DOCTYPE html>     
+<html>     
+<head>       
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />   
+<meta name="viewport" content="width=device-width, initial-scale=0.5">  
+
+<link rel="stylesheet" type="text/css" href="static/jquery.mobile-1.4.5.min.css">
+<!-- <link rel="stylesheet" type="text/css" href="jquery.mobile.theme-1.4.5.min.css"> -->
+<script type="text/javascript" src="static/jquery.min.js"></script>
+<script type="text/javascript" src="static/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="static/app.js"></script>
+<style type="text/css">
+	.ui-dialog-contain {
+		margin: 20% auto 15px auto;
+	}
+</style>
+</head>               
+<body>    
+ <!-- 导航页面 -->
+<div data-role="page" id="home" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<h1>导航</h1>
+		<a href="#player" data-role="button" class="ui-btn-right" data-transition="slide">播放器</a>
+	</div>
+
+	<div data-role="content" data-theme="b">
+		<div>
+			<input id="searchinput" type="search" name="search"  placeholder="搜索内容...">
+			<a id="search" href="#songspage" data-role="button" onclick="ajaxSearch(0,40)">搜索</a>
+			<p></p>
+		</div>
+			
+
+		<ul data-role="listview" data-inset="true">
+		  <li><a href="#list1" data-transition="slide" onclick="ajaxHotSong(0,19)">#00 排行榜</a></li>
+		  <li><a href="#list2" data-transition="slide" onclick="ajaxHotArtists()">#01 艺术家</a></li>
+		  <li><a href="#list3" data-transition="slide" onclick="ajaxNewAlbums()">#02 新碟上架</a></li>
+		  <li><a href="#list4" data-transition="slide" onclick="ajaxDjChannels()">#03 DJ节目</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn" onclick="ajaxPlayMusic('32013037')">播放</a></li>        
+				<li><a href="#" class="pausebtn" onclick="ajaxPauseMusic()">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>             
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>
+</div>
+
+<!-- 播放器 -->
+<div data-role="page" id="player" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>播放器</h1>
+		<a href="#" data-role="button" onclick="ajaxDelAllSong()">删除所有</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+	<!-- 专辑图片 -->
+		<div  style="width:100% ;text-align:center;margin-left: auto;margin-right: auto;">
+			<img id="album_picurl" src="static/123.jpg" style="width:40%;">
+		</div>
+		<span>歌手:</span><a id="artist" href="" data-role="button" data-inline="true" data-mini="true">aaaa</a>
+		<br>
+		<span>歌名:</span><a id="song_name" href="" data-role="button" data-inline="true" data-mini="true">bbbb</a>
+	<!-- 音量调节 -->
+		<div id="yinliang"  data-role="fieldcontain" >
+		<span>音量：</span>
+			<input type="range" name="points" id="points" value="100" min="0" max="100" onchange="ajaxSetVolume()"> 
+		</div>
+	<!-- 播放列表 -->
+		<ul id="playlist" data-role="listview" data-inset="true">
+		  <li class="li1"><a href="#" onclick="ajaxGetSong('32013037')">111</a><a href="#" data-theme="b"  onclick="ajaxPlayMusic('32013037')"></a></li>
+		  <li class="li2"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li3"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li4"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li5"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li6"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li7"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li8"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li9"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li10"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn">播放</a></li>
+				<li><a href="#" class="pausebtn">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>           
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>
+
+</div>
+<!-- 排行榜 -->
+<div data-role="page" id="list1" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>排行榜</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+		<ul id="hotsonglist" data-role="listview" data-inset="true">
+		  <li class="li1"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li2"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li3"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li4"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li5"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li6"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li7"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li8"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li9"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li10"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		</ul>
+		<div data-role="controlgroup" data-type="horizontal" style="text-align: right;">
+		<a id="hotsongpre" href="#" data-role="button" onclick="HotSongPre()">上一页</a>
+		<a id="hotsongnext" href="#" data-role="button" onclick="HotSongNext()">下一页</a>
+		</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn">播放</a></li>        
+				<li><a href="#" class="pausebtn">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>             
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>
+	</div>
+</div>
+
+<!-- 艺术家 -->
+<div data-role="page" id="list2" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>艺术家</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+		<ul id="artistslist" data-role="listview" data-inset="true">
+		  <li class="li1"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li2"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li3"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li4"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li5"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li6"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li7"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li8"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li9"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li10"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn">播放</a></li>        
+				<li><a href="#" class="pausebtn">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>            
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>	
+</div>
+
+<!-- 新碟上架 -->
+<div data-role="page" id="list3" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>新碟上架</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+		<ul id="albumslist" data-role="listview" data-inset="true">
+		  <li class="li1"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li2"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li3"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li4"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li5"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li6"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li7"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li8"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li9"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li10"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" id="playbtn">播放</a></li>        
+				<li><a href="#" id="pausebtn">暂停</a></li>
+				<li><a href="#" id="prevbtn">上一曲</a></li>
+				<li><a href="#" id="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>	
+</div>
+
+<!-- DJ节目 -->
+<div data-role="page" id="list4" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>DJ节目</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+		<ul id="djlist" data-role="listview" data-inset="true">
+		  <li class="li1"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li2"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li3"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li4"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li5"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li6"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li7"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li8"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li9"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li10"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn">播放</a></li>        
+				<li><a href="#" class="pausebtn">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>         
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>	
+</div>
+
+<!-- 歌曲页面 -->
+<div data-role="page" id="songspage" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1 id="songs_title">歌曲列表</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+		<ul id="songslist" data-role="listview" data-inset="true">
+		  <li class="li1"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li2"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li3"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li4"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li5"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li6"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li7"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li8"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li9"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li10"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn">播放</a></li>        
+				<li><a href="#" class="pausebtn">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>         
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>	
+</div>
+
+<!-- 专辑页面 -->
+<div data-role="page" id="album" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>专辑</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+	<!-- 专辑图片 -->
+		<div  style="width:100% ;text-align:center;margin-left: auto;margin-right: auto;">
+			<img id="albumpicurl" src="static/123.jpg" style="width:40%;">
+		</div>
+		<span>歌手:</span><a id="album_artist" href="" data-role="button" data-inline="true" data-mini="true">aaaa</a>
+		<br>
+		<span>专辑:</span><a id="album_name" href="" data-role="button" data-inline="true" data-mini="true">bbbb</a>
+	<!-- 歌曲列表 -->
+		<ul id="albumsongs" data-role="listview" data-inset="true">
+		  <li class="li1"><a href="#" onclick="ajaxGetSong('32013037')">111</a><a href="#" data-theme="b"  onclick="ajaxPlayMusic('32013037')"></a></li>
+		  <li class="li2"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li3"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li4"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li5"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li6"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li7"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li8"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li9"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		  <li class="li10"><a href="#">111</a><a href="#" data-theme="b">111</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn">播放</a></li>
+				<li><a href="#" class="pausebtn">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>           
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>
+</div>
+
+<!-- 对话框 -->
+<div data-role="page" id="dialog" data-close-btn="right" data-theme="b" style="background: rgba(29, 29, 29,0.7)!important">
+	<div data-role="header">
+		<a href="#" data-rel="back" id="dialog_delbtn" >删除</a>
+		<h1>操作</h1>
+	</div>
+
+	<div data-role="content">
+		<div  style="width:100% ;text-align:center;margin-left: auto;margin-right: auto;">
+			<img id="dialog_album_picurl" src="static/123.jpg" style="width:40%;">
+		</div>	
+		<span>歌手:</span><a id="dialog_artist" href="" data-role="button" data-inline="true" data-mini="true">aaaa</a>
+		<br>
+		<span>歌名:</span><a id="dialog_song_name" href="" data-role="button" data-inline="true" data-mini="true">bbbb</a>
+		<br>
+		<span>专辑:</span><a id="dialog_album" href="" data-role="button" data-inline="true" data-mini="true">cccc</a>
+
+		<a href="#" data-rel="back" id="dialog_playbtn" data-role="button">播放</a>
+	</div>
+
+</div>
+
+<!-- 歌曲信息对话框 -->
+<div data-role="page" id="songDialog" data-close-btn="right" data-theme="b" style="background: rgba(29, 29, 29,0.7)!important">
+	<div data-role="header">
+		<h1>歌曲信息</h1>
+		<a href="#" data-rel="back" id="songDialog_addbtn" >添加到播放列表</a>
+	</div>
+
+	<div data-role="content">
+		<div  style="width:100% ;text-align:center;margin-left: auto;margin-right: auto;">
+			<img id="songDialog_album_picurl" src="static/123.jpg" style="width:40%;">
+		</div>	
+		<span>歌手:</span><a id="songDialog_artist" href="" data-role="button" data-inline="true" data-mini="true">aaaa</a>
+		<br>
+		<span>歌名:</span><a id="songDialog_song_name" href="" data-role="button" data-inline="true" data-mini="true">bbbb</a>
+		<br>
+		<span>专辑:</span><a id="songDialog_album" href="" data-role="button" data-inline="true" data-mini="true">cccc</a>
+
+		<a href="#" data-rel="back" id="songDialog_playbtn" data-role="button">播放</a>
+	</div>
+
+</div>
+</body>     
+</html>
