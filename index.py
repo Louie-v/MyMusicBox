@@ -42,6 +42,7 @@ class Application(tornado.web.Application):
         handlers = [
             #for html
             (r"/", MainHandler),
+            (r"/shutdown", ShutdownHandler),
             # (r"/song.html", GetSongHandler),
 
             
@@ -66,6 +67,7 @@ class Application(tornado.web.Application):
             (r"/ajaxAddSong", AjaxAddSongHandler),
             (r"/ajaxNextSong", AjaxNextSongHandler),
             (r"/ajaxPrevSong", AjaxPrevSongHandler),
+            (r"/ajaxShutdown", AjaxShutdownHandler),
         ] 
         
         settings = dict(
@@ -94,16 +96,13 @@ class MainHandler(tornado.web.RequestHandler):
         # new_albums = NetEase.artists('4292')
         self.render("index.html")
 
-class GetSongHandler(tornado.web.RequestHandler):
+class ShutdownHandler(tornado.web.RequestHandler):
     def initialize(self):
         pass
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
-        NetEase.refresh()
-        req = { 'sid':self.get_argument("sid") } 
-        res = NetEase.song_detail(  req['sid'] )
         #self.write( tornado.escape.json_encode(res) )
-        self.render("song.html", title="homeway|share", data=res)
+        self.render("shutdown.html")
 
 # class AjaxGetAlbumHandler(tornado.web.RequestHandler):
 #     def initialize(self):
@@ -422,6 +421,19 @@ class AjaxPrevSongHandler(tornado.web.RequestHandler):
     def post(self):
         res=player.prevMusic()
         self.write( tornado.escape.json_encode({'song_id': res}))
+
+# 关机
+class AjaxShutdownHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        '''database init'''
+        self.sid = self.get_secure_cookie("sid")
+        #self.data = session.get(self.sid)
+        #self.set_secure_cookie("sid",self.data['_id'])
+    def get(self):
+        self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
+    def post(self):
+        os.system("shutdown -h now")
+        self.write( tornado.escape.json_encode({'song_id': True}))
 
 def base_url(path):
     return "http://127.0.0.1/"+path

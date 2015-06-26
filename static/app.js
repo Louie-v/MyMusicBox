@@ -799,3 +799,22 @@ function ajaxPrevSong () {
 	});
 	
 }
+
+function ajaxShutdown () {
+	$.ajax({
+		url: '/ajaxShutdown',
+		type: 'POST',
+		dataType: 'JSON',
+	})
+	.done(function(res) {
+		console.log("success");
+		alert(res);
+	})
+	.fail(function() {
+		console.log("error");
+	})
+	.always(function() {
+		console.log("complete");
+	});
+	
+}
