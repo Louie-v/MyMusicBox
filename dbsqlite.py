@@ -14,7 +14,7 @@ class DbSqlite():
             '''
             创建数据库，如果库存在，不创建。
             '''
-            creat_db_sql='''
+            creat_db_plist_sql='''
                 CREATE TABLE if not exists "plist" (
                 "id"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 "songid"  INTEGER NOT NULL,
@@ -25,17 +25,59 @@ class DbSqlite():
                 "album_picurl"  TEXT(200),
                 CONSTRAINT "listid" UNIQUE ("id" ASC),
                 CONSTRAINT "songid" UNIQUE ("songid" ASC)
-                );'''
+                );
+                '''
+            creat_db_seting_sql='''
+            CREATE TABLE if not exists "seting" (
+                "id"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                "name"  TEXT(20) NOT NULL,
+                "value"  TEXT(100) NOT NULL,
+                CONSTRAINT "id" UNIQUE ("id" ASC)
+                CONSTRAINT "name" UNIQUE ("name" ASC)
+                );
+            '''
+
+
             try:
                 conn=sqlite3.connect(dbName)
                 cr=conn.cursor()
-                cr.execute(creat_db_sql)
+                cr.execute(creat_db_plist_sql)
+                conn.commit()
+                cr.execute(creat_db_seting_sql)
+                conn.commit()
                 fe=cr.fetchall()
                 cr.close()
                 conn.close()
             except sqlite3.Error,e:
                 print "On Create Table Error: ",e
 
+            # 管理密码初始化
+            set_default_pwd_sql='''
+            INSERT INTO "seting" ( "name", "value") VALUES ( 'pwd', 123456);
+            '''
+            pwd=self.select_seting_db("pwd")
+            if not pwd:
+                try:
+                    conn=sqlite3.connect(dbName)
+                    cr=conn.cursor()
+                    cr.execute(set_default_pwd_sql)
+                    conn.commit()
+                    fe=cr.fetchall()
+                    cr.close()
+                    conn.close()
+                except sqlite3.Error,e:
+                    print "On Set Default Pwd: ",e
+    def select_seting_db(self,name):
+            '''
+            设置查询
+            '''
+            conn=sqlite3.connect(dbName)
+            cr=conn.cursor()
+            cr.execute("select value from seting where name=\'" + name +"\';")
+            fe=cr.fetchall()
+            cr.close()
+            conn.close()
+            return  fe
 
     def select_db(self,sid):
             '''
@@ -144,5 +186,6 @@ if __name__ == "__main__":
     })
     db.select_all()
     db.select_db(str(2222))
+
 
 

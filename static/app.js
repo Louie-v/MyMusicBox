@@ -801,20 +801,55 @@ function ajaxPrevSong () {
 }
 
 function ajaxShutdown () {
-	$.ajax({
-		url: '/ajaxShutdown',
-		type: 'POST',
-		dataType: 'JSON',
-	})
-	.done(function(res) {
-		console.log("success");
-		alert(res);
-	})
-	.fail(function() {
-		console.log("error");
-	})
-	.always(function() {
-		console.log("complete");
-	});
+	if(confirm("确认关机")){
+		$.ajax({
+			url: '/ajaxShutdown',
+			type: 'POST',
+			dataType: 'JSON',
+		})
+		.done(function() {
+			console.log("success");
+
+		})
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	}
+
 	
+}
+
+function ajaxLoginConfrim () {
+	var pwd=$("#pwd").val();
+	if(pwd){
+		showLoader();
+		$.ajax({
+			url: '/',
+			type: 'POST',
+			dataType: 'JSON',
+			data: {'pwd': pwd},
+		})
+		.done(function(res) {
+			console.log("success");
+			if(res['result']==true){
+				window.location='index';
+			}
+			else{
+				alert("验证失败，请重试！");
+			}
+		})
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+			hideLoader();
+		});
+	}
+	else{
+		alert("请输入管理密码！");
+	}
 }

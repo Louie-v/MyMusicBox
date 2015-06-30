@@ -42,6 +42,7 @@ class Application(tornado.web.Application):
         handlers = [
             #for html
             (r"/", MainHandler),
+            (r"/index", IndexHandler),
             (r"/shutdown", ShutdownHandler),
             # (r"/song.html", GetSongHandler),
 
@@ -82,27 +83,56 @@ class Application(tornado.web.Application):
 
 
 ################################## html ############################################
-
+#登录
 class MainHandler(tornado.web.RequestHandler):
     def initialize(self):
         '''database init'''
         self.sid = self.get_secure_cookie("sid")
-        #self.data = session.get(self.sid)
-        #self.set_secure_cookie("sid",self.data['_id'])
-        
+
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
-        # NetEase.refresh()
-        # new_albums = NetEase.artists('4292')
-        self.render("index.html")
+        self.render("login.html")
+    def post(self):
+        try:
+            req=self.get_argument('pwd')
+            pwd=db.select_seting_db('pwd')
+            if req == pwd[0][0]:
+                self.set_cookie('admin','admin')
+                self.write(tornado.escape.json_encode( {'result': True, 'info': '认证成功！' } ) )
+            else:
+                self.write(tornado.escape.json_encode( {'result':False, 'info': '认证失败！' } ) )
+        except:
+            self.write(tornado.escape.json_encode( {'result':False, 'info': '认证失败！' } ) )
 
+#导航
+class IndexHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        '''database init'''
+        self.sid = self.get_secure_cookie("sid")
+
+
+    def get(self):
+        self.set_header("Accept-Charset", "utf-8")
+        if self.get_cookie('admin') == 'admin':
+            self.render("index.html")
+        else:
+            self.redirect('/')
+
+    def post(self):
+        self.redirect('/')
+
+#关机
 class ShutdownHandler(tornado.web.RequestHandler):
     def initialize(self):
         pass
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
         #self.write( tornado.escape.json_encode(res) )
-        self.render("shutdown.html")
+        cookie=self.get_cookie('admin')
+        if cookie  == 'admin':
+            self.render("shutdown.html")
+        else:
+            self.redirect('/')
 
 # class AjaxGetAlbumHandler(tornado.web.RequestHandler):
 #     def initialize(self):

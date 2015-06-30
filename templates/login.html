@@ -13,15 +13,17 @@
 		margin: 20% auto 15px auto;
 	}
 </style>
+
 </head>  
 <body>
 <div data-role="page" id="home" data-theme="b">
 	<div data-role="header" data-position="fixed">
-		<h1>确认关机</h1>
+		<h1>请输入管理密码</h1>
 	</div>
 
 	<div data-role="content" data-theme="b">
-		<a href="#" data-role="button" onclick="ajaxShutdown()">关机</a>
+		<input id="pwd" type="password" name="pwd">
+		<a href="#" onclick="ajaxLoginConfrim()" data-role="button">验证</a>
 	</div>
 	
 	<div data-role="footer" data-position="fixed" data-theme="b">
@@ -29,6 +31,6 @@
 
 	</div>
 </div>
-	
+
 </body>
 </html>
