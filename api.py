@@ -199,7 +199,8 @@ class NetEase:
     def top_songlist(self, offset=0, limit=20):
         __offset=int(offset)
         __limit=int(limit)
-        action = 'http://music.163.com/discover/toplist?offsetlimit='+str(__limit)
+        action = 'http://music.163.com/discover/toplist?id=3778678&offsetlimit='+str(__limit)
+             
 
         try:
             connection = requests.get(action, headers=self.header, timeout=default_timeout)

@@ -35,6 +35,8 @@ class Play(MusicData):
     playList = []
     playNum = 0
     playFlag = True
+    shutdownFlag=False
+    shutdownTime=0
     def __init__ (self):
         self.is_playing = False
         self.music_option = {
@@ -73,6 +75,12 @@ class Play(MusicData):
                 time.sleep(1)
                 self.nextMusic()
                 time.sleep(2)
+            if self.shutdownFlag==True:
+                print "system will shutdown in ",int((self.shutdownTime-time.time())/60),"min.",int((self.shutdownTime-time.time())%60)
+                if self.shutdownTime <= time.time():
+                    os.system("shutdown -h now")
+                    self.shutdownFlag=False
+
             time.sleep(1)
     # play music
     def play_music(self, sid):

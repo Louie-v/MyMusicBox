@@ -17,10 +17,12 @@
 <body>
 <div data-role="page" id="home" data-theme="b">
 	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1>确认关机</h1>
 	</div>
 
 	<div data-role="content" data-theme="b">
+		<input id="shutdowntime" type="text" name="sdtime"  placeholder="关机时间">
 		<a href="#" data-role="button" onclick="ajaxShutdown()">关机</a>
 	</div>
 	

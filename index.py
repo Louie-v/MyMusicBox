@@ -10,6 +10,8 @@ import tornado.options
 import tornado.httpserver
 import tornado.web
 import os
+import time
+
 
 
 # cookie_secret
@@ -97,7 +99,7 @@ class MainHandler(tornado.web.RequestHandler):
             req=self.get_argument('pwd')
             pwd=db.select_seting_db('pwd')
             if req == pwd[0][0]:
-                self.set_cookie('admin','admin')
+                self.set_secure_cookie('admin','admin',expires_days=None)
                 self.write(tornado.escape.json_encode( {'result': True, 'info': '认证成功！' } ) )
             else:
                 self.write(tornado.escape.json_encode( {'result':False, 'info': '认证失败！' } ) )
@@ -113,7 +115,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
-        if self.get_cookie('admin') == 'admin':
+        if self.get_secure_cookie('admin') == 'admin':
             self.render("index.html")
         else:
             self.redirect('/')
@@ -128,22 +130,11 @@ class ShutdownHandler(tornado.web.RequestHandler):
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
         #self.write( tornado.escape.json_encode(res) )
-        cookie=self.get_cookie('admin')
+        cookie=self.get_secure_cookie('admin')
         if cookie  == 'admin':
             self.render("shutdown.html")
         else:
             self.redirect('/')
-
-# class AjaxGetAlbumHandler(tornado.web.RequestHandler):
-#     def initialize(self):
-#         pass
-#     def get(self):
-#         self.set_header("Accept-Charset", "utf-8")
-#         NetEase.refresh()
-#         req = { 'aid':self.get_argument("aid") }
-#         res = NetEase.album(  req['aid'] )
-#         #self.write( tornado.escape.json_encode(res) )
-#         self.render("album.html", title="homeway|share", data=res)
 
 ################################## ajax ############################################
 #搜索信息
@@ -462,8 +453,14 @@ class AjaxShutdownHandler(tornado.web.RequestHandler):
     def get(self):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
-        os.system("shutdown -h now")
-        self.write( tornado.escape.json_encode({'song_id': True}))
+        cookie=self.get_secure_cookie('admin')
+        if cookie  == 'admin':
+            sTime=self.get_argument("stime")
+            player.shutdownFlag=True
+            player.shutdownTime=time.time()+int(sTime)
+            self.write( tornado.escape.json_encode({'result': True}))
+        else:
+            self.write( tornado.escape.json_encode({'result': False}))
 
 def base_url(path):
     return "http://127.0.0.1/"+path

@@ -802,10 +802,17 @@ function ajaxPrevSong () {
 
 function ajaxShutdown () {
 	if(confirm("确认关机")){
+		var stime=0;
+		stime=$("#shutdowntime").val();
+		if(!stime){
+			stime=0;
+		}
+
 		$.ajax({
 			url: '/ajaxShutdown',
 			type: 'POST',
 			dataType: 'JSON',
+			data: {'stime': stime},
 		})
 		.done(function() {
 			console.log("success");
