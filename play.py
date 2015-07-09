@@ -71,12 +71,16 @@ class Play(MusicData):
 
     def playTimer(self):
         while 1:
+            # 循环播放
             if self.playFlag == False:
                 time.sleep(1)
                 self.nextMusic()
                 time.sleep(2)
+
+            # 定时关机
             if self.shutdownFlag==True:
-                print "system will shutdown in ",int((self.shutdownTime-time.time())/60),"min.",int((self.shutdownTime-time.time())%60)
+                sdTime=self.shutdownTime-time.time()
+                print "system will shutdown in ",int(sdTime/60),":",int(sdTime%60)
                 if self.shutdownTime <= time.time():
                     os.system("shutdown -h now")
                     self.shutdownFlag=False

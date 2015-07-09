@@ -71,6 +71,8 @@ class Application(tornado.web.Application):
             (r"/ajaxNextSong", AjaxNextSongHandler),
             (r"/ajaxPrevSong", AjaxPrevSongHandler),
             (r"/ajaxShutdown", AjaxShutdownHandler),
+            (r"/ajaxGetShutdownTime", AjaxGetShutdownTimeHandler),
+            (r"/ajaxCancelShutdown", AjaxCancelShutdownHandler),
         ] 
         
         settings = dict(
@@ -458,6 +460,37 @@ class AjaxShutdownHandler(tornado.web.RequestHandler):
             sTime=self.get_argument("stime")
             player.shutdownFlag=True
             player.shutdownTime=time.time()+int(sTime)
+            self.write( tornado.escape.json_encode({'result': True}))
+        else:
+            self.write( tornado.escape.json_encode({'result': False}))
+#获取关机时间
+class AjaxGetShutdownTimeHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        '''database init'''
+        self.sid = self.get_secure_cookie("sid")
+    def get(self):
+        self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
+    def post(self):
+        cookie=self.get_secure_cookie('admin')
+        if cookie  == 'admin':
+            sTime=player.shutdownTime-time.time()
+            sTime=str(int(sTime/60))+":"+str(int(sTime%60))
+            self.write( tornado.escape.json_encode({'result': sTime}))
+        else:
+            self.write( tornado.escape.json_encode({'result': False}))
+
+#取消关机
+class AjaxCancelShutdownHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        '''database init'''
+        self.sid = self.get_secure_cookie("sid")
+    def get(self):
+        self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
+    def post(self):
+        cookie=self.get_secure_cookie('admin')
+        if cookie  == 'admin':
+            player.shutdownFlag=False
+            player.shutdownTime=0
             self.write( tornado.escape.json_encode({'result': True}))
         else:
             self.write( tornado.escape.json_encode({'result': False}))

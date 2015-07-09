@@ -816,7 +816,8 @@ function ajaxShutdown () {
 		})
 		.done(function() {
 			console.log("success");
-
+			$("#stbtn").html("取消关机");
+			$("#stbtn").attr('onclick', 'ajaxCancelShutdown()');
 		})
 		.fail(function() {
 			console.log("error");
@@ -859,4 +860,44 @@ function ajaxLoginConfrim () {
 	else{
 		alert("请输入管理密码！");
 	}
+}
+
+function ajaxCancelShutdown () {
+	$.ajax({
+		url: '/ajaxGetShutdownTime',
+		type: 'POST',
+		dataType: 'JSON',
+	})
+	.done(function(res) {
+		console.log("success");
+		result=res["result"];
+		if(confirm("系统将在"+result+"后关闭，确认取消关机？")){
+			$.ajax({
+				url: '/ajaxCancelShutdown',
+				type: 'POST',
+				dataType: 'JSON',
+			})
+			.done(function(res1) {
+				console.log("success");
+				result1=res1["result"];
+				$("#stbtn").html("关机");
+				$("#stbtn").attr('onclick', 'ajaxShutdown()');
+				alert(result1);
+			})
+			.fail(function() {
+				console.log("error");
+			})
+			.always(function() {
+				console.log("complete");
+			});
+			
+		}
+	})
+	.fail(function() {
+		console.log("error");
+	})
+	.always(function() {
+		console.log("complete");
+	});
+	
 }
