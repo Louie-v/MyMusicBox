@@ -1,5 +1,14 @@
 # 关于  MyMusicBox 
 ---
+#效果图
+1. 登录验证![](http://7xkdyj.com1.z0.glb.clouddn.com/1.jpg)
+2. 导航![](http://7xkdyj.com1.z0.glb.clouddn.com/2.jpg)
+3. 歌手列表![](http://7xkdyj.com1.z0.glb.clouddn.com/3.jpg)
+4. 歌曲列表![](http://7xkdyj.com1.z0.glb.clouddn.com/4.jpg)
+5. 歌曲信息![](http://7xkdyj.com1.z0.glb.clouddn.com/5.jpg)
+6. 播放列表![](http://7xkdyj.com1.z0.glb.clouddn.com/6.jpg)
+7. 设置![](http://7xkdyj.com1.z0.glb.clouddn.com/8.jpg)
+
 
 #实现
 
