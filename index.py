@@ -73,6 +73,7 @@ class Application(tornado.web.Application):
             (r"/ajaxShutdown", AjaxShutdownHandler),
             (r"/ajaxGetShutdownTime", AjaxGetShutdownTimeHandler),
             (r"/ajaxCancelShutdown", AjaxCancelShutdownHandler),
+            (r"/ajaxChangePwd", AjaxChangePwdHandler),
         ] 
         
         settings = dict(
@@ -492,6 +493,23 @@ class AjaxCancelShutdownHandler(tornado.web.RequestHandler):
             player.shutdownFlag=False
             player.shutdownTime=0
             self.write( tornado.escape.json_encode({'result': True}))
+        else:
+            self.write( tornado.escape.json_encode({'result': False}))
+
+#修改密码
+class AjaxChangePwdHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        '''database init'''
+        self.sid = self.get_secure_cookie("sid")
+    def get(self):
+        self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
+    def post(self):
+        cookie=self.get_secure_cookie('admin') 
+        if cookie  == 'admin':
+            req={'nowpwd':self.get_argument("nowpwd"), 'newpwd': self.get_argument("newpwd")}
+            res=db.change_pwd(req['nowpwd'],req['newpwd'])
+            self.write( tornado.escape.json_encode({'result': res}))
+
         else:
             self.write( tornado.escape.json_encode({'result': False}))
 

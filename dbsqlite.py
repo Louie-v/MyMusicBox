@@ -157,21 +157,47 @@ class DbSqlite():
             return False
 
     def select_all(self):
-            '''
-            查询所有结果
-            '''
+        '''
+        查询所有结果
+        '''
+        conn=sqlite3.connect(dbName)
+        cr=conn.cursor()
+        cr.execute("select songid,songname,artist from plist;")
+        fe=cr.fetchall()
+        cr.close()
+        conn.close()
+        return  fe
+        print "====================================select start================================"
+        for row in fe:
+            print row
+        print "=====================================select end================================"
+        return fe
+
+    def change_pwd(self,nowpwd,newpwd):
+        '''
+        修改密码
+        '''
+        try:
             conn=sqlite3.connect(dbName)
             cr=conn.cursor()
-            cr.execute("select songid,songname,artist from plist;")
+            cr.execute("select VALUE from seting WHERE name='pwd';")
             fe=cr.fetchall()
-            cr.close()
-            conn.close()
-            return  fe
-            print "====================================select start================================"
-            for row in fe:
-                print row
-            print "=====================================select end================================"
-            return fe
+            __nowpwd=fe[0][0]
+            if nowpwd == __nowpwd:
+                try:
+                    cr.execute("UPDATE SETING SET VALUE='"+newpwd+"' where name='pwd';")
+                    conn.commit()
+                    fe=cr.fetchall()
+                    return True
+                except sqlite3,e:
+                    print e
+                    return False
+            else:
+                return False
+        except e:
+            print e
+            return False
+
 
 
 if __name__ == "__main__":

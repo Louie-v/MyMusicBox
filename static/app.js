@@ -700,6 +700,10 @@ function ajaxDelSong (sid) {
 		console.log('success');
 		if (req['result']==true){
 			alert("删除成功！");
+			$(".playbtn").html("请选择歌曲");
+			$(".playbtn").attr('onclick', '');
+			$(".pausebtn").html("暂停");
+			$(".pausebtn").attr('onclick', '');
 			ajaxGetHistory();
 
 		}else{
@@ -880,9 +884,12 @@ function ajaxCancelShutdown () {
 			.done(function(res1) {
 				console.log("success");
 				result1=res1["result"];
-				$("#stbtn").html("关机");
-				$("#stbtn").attr('onclick', 'ajaxShutdown()');
-				alert(result1);
+				if(result1==true){
+					$("#stbtn").html("关机");
+					$("#stbtn").attr('onclick', 'ajaxShutdown()');
+					alert("取消成功");
+				}
+				
 			})
 			.fail(function() {
 				console.log("error");
@@ -900,4 +907,53 @@ function ajaxCancelShutdown () {
 		console.log("complete");
 	});
 	
+}
+
+function newPwdConfrimOnChange () {
+	newpwd=$("#newpwd").val();
+	newpwdconfrim=$("#newpwdconfrim").val();
+	nowpwd=$("#nowpwd").val();
+	if(nowpwd !="" || nowpwd ){
+		if(newpwd !=newpwdconfrim || newpwd == "" || newpwdconfrim == ""){
+			$("#changepwdbtn").html("新密码两次不一至或不能为空");
+			$("#changepwdbtn").attr('onclick', '');
+		}else{
+			$("#changepwdbtn").html("确认修改");
+			$("#changepwdbtn").attr('onclick', 'ajaxChangePwd()');
+		};
+	}else{
+		$("#changepwdbtn").html("请输入原密码");
+		$("#changepwdbtn").attr('onclick', '');
+		$("#nowpwd").focus();
+	};
+}
+
+function ajaxChangePwd () {
+	nowpwd=$("#nowpwd").val();
+	newpwd=$("#newpwd").val();
+
+	if(newpwd != "" || newpwd || pwd == "" || pwd){
+		$.ajax({
+			url: '/ajaxChangePwd',
+			type: 'POST',
+			dataType: 'JSON',
+			data: {'newpwd': newpwd, 'nowpwd': nowpwd},
+		})
+		.done(function(res) {
+			console.log("success");
+			result=res;
+			if (result['result']==true) {
+				alert("修改成功");
+			}else{
+				alert("修改失败");
+			};
+		})
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	};
+		
 }

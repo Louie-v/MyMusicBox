@@ -18,13 +18,26 @@
 <div data-role="page" id="home" data-theme="b">
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
-		<h1>确认关机</h1>
+		<h1>管理</h1>
 	</div>
 
 	<div data-role="content" data-theme="b">
-		<input id="shutdowntime" type="text" name="sdtime"  placeholder="定时关机时间（秒）">
-		<a href="#" id="stbtn" data-role="button" onclick="ajaxShutdown()">关机</a>
+		<div data-role="collapsible">
+			<h1>定时关机</h1>
+			<input id="shutdowntime" type="text" name="sdtime"  placeholder="定时关机时间（秒）">
+			<a href="#" id="stbtn" data-role="button" onclick="ajaxShutdown()">关机</a>
+		</div>
+		
+
+		<div data-role="collapsible">
+			<h1>修改密码</h1>
+			<input id="nowpwd" type="password" onkeyup="newPwdConfrimOnChange()"  placeholder="原密码">
+			<input id="newpwd" type="password" onkeyup="newPwdConfrimOnChange()" placeholder="新密码">
+			<input id="newpwdconfrim" type="password" onkeyup="newPwdConfrimOnChange()" placeholder="新密码确认">
+			<a href="#" id="changepwdbtn" data-role="button" onclick="">确认修改</a>
+		</div>
 	</div>
+
 	
 	<div data-role="footer" data-position="fixed" data-theme="b">
   
