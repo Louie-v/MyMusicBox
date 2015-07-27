@@ -1,7 +1,7 @@
 #!/usr/local/Cellar/python
 # -*- coding: utf-8 -*-
 
-__author__ = 'Louie.v (louie.vv@gmail.com)'
+__author__ = 'Louie.v (Check.vv@gmail.com)'
 
 import tornado.auth
 import tornado.escape
@@ -13,17 +13,13 @@ import os
 import time
 
 
-
-# cookie_secret
-import base64 
+import base64
 import uuid  
 
 
 from tornado.escape import json_encode
 from tornado.options import define, options
 
-
-#some global information like session
 
 import play
 import api
@@ -257,8 +253,8 @@ class AjaxHotSongHandler(tornado.web.RequestHandler):
     def post(self):
         self.set_header("Accept-Charset", "utf-8")
         NetEase.refresh()
-        req = { 'offset': self.get_argument("offset"), 'limit': self.get_argument("limit") }
-        res_temp = NetEase.top_songlist( req['offset'],req['limit'] )
+        req = { 'idx': self.get_argument("idx"), }
+        res_temp = NetEase.top_songlist( idx=int(req['idx']) )
         res=NetEase.dig_info(res_temp,'songs')
         self.write( tornado.escape.json_encode(res) )
 

@@ -8,11 +8,6 @@
 <script type="text/javascript" src="static/jquery.min.js"></script>
 <script type="text/javascript" src="static/jquery.mobile-1.4.5.min.js"></script>
 <script type="text/javascript" src="static/app.js"></script>
-<style type="text/css">
-	.ui-dialog-contain {
-		margin: 20% auto 15px auto;
-	}
-</style>
 </head>  
 
 <body>    
@@ -27,13 +22,13 @@
 	<div data-role="content" data-theme="b">
 		<div>
 			<input id="searchinput" type="search" name="search"  placeholder="搜索内容...">
-			<a id="search" href="#songspage" data-role="button" onclick="ajaxSearch(0,40)">搜索</a>
+			<a id="search" href="#songspage" data-transition="slide" data-role="button" onclick="ajaxSearch(0,40)">搜索</a>
 			<p></p>
 		</div>
 			
 
 		<ul data-role="listview" data-inset="true">
-		  <li><a href="#list1" data-transition="slide" onclick="ajaxHotSong(0,19)">#00 排行榜</a></li>
+		  <li><a href="#hotsongsort" data-transition="slide">#00 排行榜</a></li>
 		  <li><a href="#list2" data-transition="slide" onclick="ajaxHotArtists()">#01 艺术家</a></li>
 		  <li><a href="#list3" data-transition="slide" onclick="ajaxNewAlbums()">#02 新碟上架</a></li>
 		  <li><a href="#list4" data-transition="slide" onclick="ajaxDjChannels()">#03 DJ节目</a></li>
@@ -92,17 +87,13 @@
 <div data-role="page" id="list1" data-theme="b">
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
-		<h1>排行榜</h1>
+		<h1 id="topsongtitle">排行榜</h1>
 		<a href="#player" data-role="button" data-transition="slide">播放器</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="hotsonglist" data-role="listview" data-inset="true">
 
 		</ul>
-		<div data-role="controlgroup" data-type="horizontal" style="text-align: right;">
-		<a id="hotsongpre" href="#" data-role="button" onclick="HotSongPre()">上一页</a>
-		<a id="hotsongnext" href="#" data-role="button" onclick="HotSongNext()">下一页</a>
-		</div>
 	<div data-role="footer" data-position="fixed" data-theme="b">
 		<div  data-role="navbar" data-position="fixed">    
 			<ul>        
@@ -285,6 +276,51 @@
 		<a href="#" data-rel="back" id="songDialog_playbtn" data-role="button">播放</a>
 	</div>
 
+</div>
+
+<!-- 热门歌单分类列表  -->
+<div data-role="page" id="hotsongsort" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>热门歌单列表</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+		<ul id="hotsongsortlist" data-role="listview" data-inset="true">
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(0)">云音乐新歌榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(1)">云音乐热歌榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(2)">网易原创歌曲榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(3)">云音乐飙升榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(4)">云音乐电音榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(5)">UK排行榜周榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(6)">美国Billboard周榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(7)">KTV嗨榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(8)">iTunes榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(9)">Hit FM Top榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(10)">日本Oricon周榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(11)">韩国Melon排行榜周榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(12)">韩国Mnet排行榜周榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(13)">韩国Melon原声周榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(14)">中国TOP排行榜(港台榜)</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(15)">中国TOP排行榜(内地榜)</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(16)">香港电台中文歌曲龙虎榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(17)">华语金曲榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(18)">中国嘻哈榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(19)">法国 NRJ EuroHot 30周榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(20)">台湾Hito排行榜</a></li>
+			<li><a href="#list1"  data-transition="slide" onclick="ajaxHotSong(21)">Beatport全球电子舞曲榜</a></li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" class="playbtn">播放</a></li>        
+				<li><a href="#" class="pausebtn">暂停</a></li>
+				<li><a href="#" class="prevbtn">上一曲</a></li>         
+				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>	
 </div>
 
 </body>     

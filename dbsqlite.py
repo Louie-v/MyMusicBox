@@ -3,7 +3,8 @@
 sqllite3 操作
 用于记录播放列表
 '''
-__author__ = 'Louie.v (louie.vv@gmail.com)'
+__author__ = 'Louie.v Check.vv@gmail.com)'
+
 import sqlite3
 
 

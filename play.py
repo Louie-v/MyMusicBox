@@ -1,10 +1,17 @@
 #!/usr/local/Cellar/python
 # -*- coding: utf-8 -*-
 
-__author__ = 'Louie.v (louie.vv@gmail.com)'
+__author__ = 'Louie.v (Check.vv@gmail.com)'
 
 import pygame
-import wget,threading,time,os,api
+import threading
+import time
+import os
+
+
+import wget
+
+import api
 from dbsqlite import DbSqlite
 
 #db初始化
@@ -131,7 +138,7 @@ class Play(MusicData):
             return str(music_info['song_id'])
         else:
             return
-    # download and move
+    # download
     def download_music(self, url,sid):
 
         file_path = self.abs_path + '/music/'
@@ -143,7 +150,7 @@ class Play(MusicData):
                 print '权限不足，无法创建目录...'
         else:
             pass
-        # 下载并移动
+        # 下载
         try:
             music = wget.download(url,music_path)
             print music

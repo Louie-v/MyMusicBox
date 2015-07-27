@@ -1,5 +1,5 @@
 /**
- * __author__ = 'Louie.v (louie.vv@gmail.com)'
+ * __author__ = 'Louie.v (Check.vv@gmail.com)'
  */
 
 $("windows").ready(function windowsReady () {
@@ -118,18 +118,96 @@ function listPlayMusic (musicSid) {
 }
 
 /**
+ * [排行榜标题处理]
+ * @param  {int} idx [排行榜类型索引]
+ * @return {无}     [无]
+ */
+function hotSongTitleSwitch (idx) {
+	switch(idx){
+		case 0:
+			$("#topsongtitle").val("云音乐新歌榜");
+			break;
+		case 1:
+			$("#topsongtitle").html("云音乐热歌榜");
+			break;
+		case 2:
+			$("#topsongtitle").html("网易原创歌曲榜");
+			break;
+		case 3:
+			$("#topsongtitle").html("云音乐飙升榜");
+			break;
+		case 4:
+			$("#topsongtitle").html("云音乐电音榜");
+			break;
+		case 5:
+			$("#topsongtitle").html("UK排行榜周榜");
+			break;
+		case 6:
+			$("#topsongtitle").html("美国Billboard周榜");
+			break;
+		case 7:
+			$("#topsongtitle").html("KTV嗨榜");
+			break;
+		case 8:
+			$("#topsongtitle").html("iTunes榜");
+			break;
+		case 9:
+			$("#topsongtitle").html("Hit FM Top榜");
+			break;
+		case 10:
+			$("#topsongtitle").html("日本Oricon周榜");
+			break;
+		case 11:
+			$("#topsongtitle").html("韩国Melon排行榜周榜");
+			break;
+		case 12:
+			$("#topsongtitle").html("韩国Mnet排行榜周榜");
+			break;
+		case 13:
+			$("#topsongtitle").html("韩国Melon原声周榜");
+			break;
+		case 14:
+			$("#topsongtitle").html("中国TOP排行榜(港台榜)");
+			break;
+		case 15:
+			$("#topsongtitle").html("中国TOP排行榜(内地榜)");
+			break;
+		case 16:
+			$("#topsongtitle").html("香港电台中文歌曲龙虎榜");
+			break;
+		case 17:
+			$("#topsongtitle").html("华语金曲榜");
+			break;
+		case 18:
+			$("#topsongtitle").html("中国嘻哈榜");
+			break;
+		case 19:
+			$("#topsongtitle").html("法国 NRJ EuroHot 30周榜");
+			break;
+		case 20:
+			$("#topsongtitle").html("台湾Hito排行榜");
+			break;
+		case 21:
+			$("#topsongtitle").html("Beatport全球电子舞曲榜");
+			break;
+		default:
+			$("#topsongtitle").html("排行榜");
+	}
+}
+
+/**
  * [歌曲排行榜]
  * @param  {int} offset [起始序号]
  * @param  {int} limit  [范围]
  * @return {无}        [无]
  */
-function ajaxHotSong (offset,limit) {
+function ajaxHotSong (idx) {
 	showLoader();
 	$.ajax({
 		url: '/ajaxHotSong',
 		type: 'POST',
 		dataType: 'JSON',
-		data: {'offset': offset, 'limit':limit },
+		data: {'idx': idx},
 	})
 	.done(function(res) {
 		console.log("success");
@@ -140,6 +218,7 @@ function ajaxHotSong (offset,limit) {
 		};
 		$("#hotsonglist").html(html);
 		$("#hotsonglist").listview("refresh");
+		hotSongTitleSwitch(idx);
 		hideLoader();
 	})
 	.fail(function() {
@@ -171,7 +250,7 @@ function ajaxHotArtists (offset,limit) {
 		var result=res;
 		var html='';
 		for (var i =0; i <result.length; i++) {
-			html+='<li class="li'+i+'"><a href="#songspage" onclick="ajaxArtistsSongList(\''+result[i]['artist_id']+'\')">'+result[i]["artists_name"]+'  |  '+result[i]['alias']+'</a></li>'
+			html+='<li class="li'+i+'"><a href="#songspage" data-transition="slide" onclick="ajaxArtistsSongList(\''+result[i]['artist_id']+'\')">'+result[i]["artists_name"]+'  |  '+result[i]['alias']+'</a></li>'
 		};
 		$("#artistslist").html(html);
 		$("#artistslist").listview("refresh");
@@ -206,7 +285,7 @@ function ajaxNewAlbums () {
 		result=res;
 		var html='';
 		for (var i =0; i <result.length; i++) {
-			html+='<li class="li'+i+'"><a href="#album" onclick="ajaxGetAlbum(\''+result[i]['album_id']+'\')">'+result[i]["albums_name"]+'  |  '+result[i]['artists_name']+'</a></li>'
+			html+='<li class="li'+i+'"><a href="#album" data-transition="slide" onclick="ajaxGetAlbum(\''+result[i]['album_id']+'\')">'+result[i]["albums_name"]+'  |  '+result[i]['artists_name']+'</a></li>'
 		};
 		$("#albumslist").html(html);
 		$("#albumslist").listview("refresh");
@@ -482,45 +561,45 @@ function ajaxSearch () {
  * @param  {int} page [页码]
  * @return {无}      [无]
  */
-function HotSongNext (page) {
-	if (page && page >1) {
-		ajaxHotSong((page-1)*20,page*20-1);
-		// 设置翻页按钮行为
-		prevpage=page-1;
-	$("#hotsongpre").attr({
-			onclick: 'HotSongPre('+prevpage+')',
-		});
-		nextpage=page+1;
-		$("#hotsongnext").attr({
-			onclick: 'HotSongNext('+nextpage+')',
-		});
-	};
-}
+// function HotSongNext (page) {
+// 	if (page && page >1) {
+// 		ajaxHotSong((page-1)*20,page*20-1);
+// 		// 设置翻页按钮行为
+// 		prevpage=page-1;
+// 	$("#hotsongpre").attr({
+// 			onclick: 'HotSongPre('+prevpage+')',
+// 		});
+// 		nextpage=page+1;
+// 		$("#hotsongnext").attr({
+// 			onclick: 'HotSongNext('+nextpage+')',
+// 		});
+// 	};
+// }
 
 /**
  * [热门歌曲上一页]
  * @param  {[int]} page [页码]
  * @return {无}      [无]
  */
-function HotSongPre (page) {
-	if (page && page >0) {
-		ajaxHotSong((page-1)*20,page*20-1);
-		if (page==1) {
-			$("#hotsongpre").attr({
-				onclick: '',
-			});
-		}else{
-			prevpage=page-1;
-			$("#hotsongpre").attr({
-				onclick: 'HotSongPre('+prevpage+')',
-			});
-		};
-		nextpage=page+1;
-		$("#hotsongnext").attr({
-			onclick: 'HotSongNext('+nextpage+')',
-		});
-	};
-}
+// function HotSongPre (page) {
+// 	if (page && page >0) {
+// 		ajaxHotSong((page-1)*20,page*20-1);
+// 		if (page==1) {
+// 			$("#hotsongpre").attr({
+// 				onclick: '',
+// 			});
+// 		}else{
+// 			prevpage=page-1;
+// 			$("#hotsongpre").attr({
+// 				onclick: 'HotSongPre('+prevpage+')',
+// 			});
+// 		};
+// 		nextpage=page+1;
+// 		$("#hotsongnext").attr({
+// 			onclick: 'HotSongNext('+nextpage+')',
+// 		});
+// 	};
+// }
 
 /**
  * [获取专辑信息]
@@ -656,6 +735,11 @@ function releasePlayList (sid) {
 	});
 }
 
+/**
+ * [更新播放列表]
+ * @param  {int} sid [歌曲ID]  
+ * @return {无} [无]
+ */
 function ajaxreleasePlayListDb (sid) {
 	showLoader();
 	if (sid){
@@ -687,6 +771,11 @@ function ajaxreleasePlayListDb (sid) {
 	
 }
 
+/**
+ * [删除播放列表当前歌曲]
+ * @param  {int} sid [歌曲ID]
+ * @return {无}     [无]
+ */
 function ajaxDelSong (sid) {
 	showLoader();
 	$.ajax({
@@ -720,6 +809,10 @@ function ajaxDelSong (sid) {
 	
 }
 
+/**
+ * [删除全部歌曲]
+ * @return {无} [无]
+ */
 function ajaxDelAllSong () {
 	if(confirm("是否全部删除")){
 		showLoader();
@@ -752,6 +845,10 @@ function ajaxDelAllSong () {
 	}
 }
 
+/**
+ * [下一曲]
+ * @return {无} [无]
+ */
 function ajaxNextSong () {
 	showLoader();
 	$.ajax({
@@ -778,6 +875,10 @@ function ajaxNextSong () {
 	
 }
 
+/**
+ * [上一曲]
+ * @return {无} [无]
+ */
 function ajaxPrevSong () {
 	showLoader();
 	$.ajax({
@@ -804,6 +905,10 @@ function ajaxPrevSong () {
 	
 }
 
+/**
+ * [关机]
+ * @return {无} [无]
+ */
 function ajaxShutdown () {
 	if(confirm("确认关机")){
 		var stime=0;
@@ -834,6 +939,10 @@ function ajaxShutdown () {
 	
 }
 
+/**
+ * [登录确认]
+ * @return {无} [无]
+ */
 function ajaxLoginConfrim () {
 	var pwd=$("#pwd").val();
 	if(pwd){
@@ -866,6 +975,10 @@ function ajaxLoginConfrim () {
 	}
 }
 
+/**
+ * [取消关机]
+ * @return {无} [无]
+ */
 function ajaxCancelShutdown () {
 	$.ajax({
 		url: '/ajaxGetShutdownTime',
@@ -909,6 +1022,10 @@ function ajaxCancelShutdown () {
 	
 }
 
+/**
+ * [修改密码确认]
+ * @return {无} [无]
+ */
 function newPwdConfrimOnChange () {
 	newpwd=$("#newpwd").val();
 	newpwdconfrim=$("#newpwdconfrim").val();
@@ -928,6 +1045,10 @@ function newPwdConfrimOnChange () {
 	};
 }
 
+/**
+ * [修改密码]
+ * @return {无} [无]
+ */
 function ajaxChangePwd () {
 	nowpwd=$("#nowpwd").val();
 	newpwd=$("#newpwd").val();
@@ -957,3 +1078,4 @@ function ajaxChangePwd () {
 	};
 		
 }
+
