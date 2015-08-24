@@ -533,6 +533,7 @@ function ajaxSearch () {
 		})
 		.done(function(res) {
 			console.log("success");
+			$.mobile.changePage("#songspage",{ transition: "slide" });
 			var result=res;
 			var html='';
 			for (var i =0; i <result.length; i++) {
@@ -550,7 +551,7 @@ function ajaxSearch () {
 			hideLoader();
 		});
 	}else{
-		alert("请填写搜索内容");
+		alert("请填写搜索内容!");
 	}
 
 	
