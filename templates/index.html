@@ -32,6 +32,7 @@
 		  <li><a href="#list2" data-transition="slide" onclick="ajaxHotArtists()">#01 艺术家</a></li>
 		  <li><a href="#list3" data-transition="slide" onclick="ajaxNewAlbums()">#02 新碟上架</a></li>
 		  <li><a href="#list4" data-transition="slide" onclick="ajaxDjChannels()">#03 DJ节目</a></li>
+		  <li><a href="#list5" data-transition="slide" onclick="ajaxList()">#04 最新歌单</a></li>
 		</ul>
 	</div>
 	<div data-role="footer" data-position="fixed" data-theme="b">
@@ -83,6 +84,7 @@
 	</div>
 
 </div>
+
 <!-- 排行榜 -->
 <div data-role="page" id="list1" data-theme="b">
 	<div data-role="header" data-position="fixed">
@@ -174,6 +176,30 @@
 				<li><a href="#" class="pausebtn">暂停</a></li>
 				<li><a href="#" class="prevbtn">上一曲</a></li>         
 				<li><a href="#" class="nextbtn">下一曲</a></li>
+			</ul>    
+		</div>
+	</div>	
+</div>
+
+<!-- 最新歌单 -->
+<div data-role="page" id="list5" data-theme="b">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:history.go(-1)" data-role="button">返回</a>
+		<h1>最新歌单</h1>
+		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+	</div>	
+	<div data-role="content" data-theme="b">
+		<ul id="classeslist" data-role="listview" data-inset="true">
+
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-theme="b">
+		<div  data-role="navbar" data-position="fixed">    
+			<ul>        
+				<li><a href="#" id="playbtn">播放</a></li>        
+				<li><a href="#" id="pausebtn">暂停</a></li>
+				<li><a href="#" id="prevbtn">上一曲</a></li>
+				<li><a href="#" id="nextbtn">下一曲</a></li>
 			</ul>    
 		</div>
 	</div>	

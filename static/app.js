@@ -1095,4 +1095,69 @@ function ajaxChangePwd () {
 	};
 		
 }
+/**
+ * [获取最新歌单列表]
+ * @return {无} [无]
+ */
+function ajaxList(){
+	showLoader();
+	$.ajax({
+		url: '/ajaxList',
+		type: 'POST',
+		dataType: 'JSON',
+		
+	})
+	.done(function(res) {
+		console.log("success");
+		var result=res;
+		var html='';
+		for (var i =0; i <result.length; i++) {
+			html+='<li class="li'+i+'"><a href="#songspage" data-transition="none" onclick="ajaxClassesGetSongList(\''+result[i]['playlist_id']+'\')">'+result[i]["playlists_name"]+'  |  '+result[i]['creator_name']+'</a></li>'
+		};
+		$("#classeslist").html(html);
+		$("#classeslist").listview("refresh");
+		hideLoader();
+	})
+	.fail(function() {
+		console.log("error");
+	})
+	.always(function() {
+		console.log("complete");
+		hideLoader();
+	});
+	
+}
 
+/**
+ * [获取歌单列表]
+ * @param  {int} playlist_id [歌单id]
+ * @return {无}             [无]
+ */
+function ajaxClassesGetSongList (playlist_id) {
+	showLoader();
+	$.ajax({
+		url: '/ajaxClassesGetSongList',
+		type: 'POST',
+		dataType: 'JSON',
+		data: {'playlist_id': playlist_id},
+	})
+	.done(function(res) {
+		console.log("success");
+		var result=res;
+		var html='';
+		for (var i =0; i <result.length; i++) {
+			html+='<li class="li'+i+'"><a href="#songDialog" data-rel="dialog" data-transition="none" onclick="ajaxSongDialogGetSong(\''+result[i]['song_id']+'\')">'+result[i]["song_name"]+'  |  '+result[i]['artist']+'</a><a href="#" data-theme="b" onclick="ajaxPlayMusic(\''+result[i]['song_id']+'\')"></a></li>'
+		};
+		$("#songslist").html(html);
+		$("#songslist").listview("refresh");
+		hideLoader();
+	})
+	.fail(function() {
+		console.log("error");
+	})
+	.always(function() {
+		console.log("complete");
+		hideLoader();
+	});
+	
+}

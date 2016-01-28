@@ -189,7 +189,8 @@ class NetEase:
 
     # 分类歌单
     def playlist_classes(self):
-        action = 'http://music.163.com/discover/playlist/'+'&csrf_token='+self.cookies['__csrf']
+        #action = 'http://music.163.com/discover/playlist/'+'&csrf_token='+self.cookies['__csrf']
+        action = 'http://music.163.com/discover/playlist'
         try:
             data = self.rawHttpRequest('GET', action)
             return data

@@ -70,6 +70,9 @@ class Application(tornado.web.Application):
             (r"/ajaxGetShutdownTime", AjaxGetShutdownTimeHandler),
             (r"/ajaxCancelShutdown", AjaxCancelShutdownHandler),
             (r"/ajaxChangePwd", AjaxChangePwdHandler),
+            (r"/ajaxList", AjaxListHandler),
+            (r"/ajaxClassesGetSongList", AjaxClassesGetSongListHandler),
+
         ] 
         
         settings = dict(
@@ -397,6 +400,8 @@ class AjaxDelAllSongHandler(tornado.web.RequestHandler):
         else:
             self.write( tornado.escape.json_encode({'result':False}) )
 
+
+
 # 添加歌曲到列表
 class AjaxAddSongHandler(tornado.web.RequestHandler):
     def initialize(self):
@@ -508,6 +513,34 @@ class AjaxChangePwdHandler(tornado.web.RequestHandler):
 
         else:
             self.write( tornado.escape.json_encode({'result': False}))
+
+# 获取最新歌单
+class AjaxListHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        '''database init'''
+        self.sid = self.get_secure_cookie("sid")
+        #self.data = session.get(self.sid)
+        #self.set_secure_cookie("sid",self.data['_id'])
+    def get(self):
+        self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
+    def post(self):
+        req_tmp=NetEase.top_playlists(limit=100)
+        req=NetEase.dig_info(req_tmp,"top_playlists")
+        self.write(tornado.escape.json_encode(req))
+
+# 获取歌单歌曲列表
+class AjaxClassesGetSongListHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        '''database init'''
+        self.sid = self.get_secure_cookie("sid")
+        #self.data = session.get(self.sid)
+        #self.set_secure_cookie("sid",self.data['_id'])
+    def get(self):
+        self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
+    def post(self):
+        req_tmp={'playlist_id':self.get_argument("playlist_id")}
+        req=NetEase.dig_info(NetEase.playlist_detail(req_tmp['playlist_id']),"songs")
+        self.write(tornado.escape.json_encode(req))
 
 def base_url(path):
     return "http://127.0.0.1/"+path
