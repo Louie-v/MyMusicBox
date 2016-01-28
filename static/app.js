@@ -9,7 +9,22 @@ $("windows").ready(function windowsReady () {
 	$(".playbtn").attr({
 			onclick: 'ajaxPlayMusic()'
 		});
+	//设置两个输入框焦点
+	$("#searchinput").focus();
+	$("#pwd").focus();
+	//搜索绑定回车
+	$("#searchinput").keydown(function(event) {
+		if(event.keyCode===13){
+			ajaxSearch();
+		}
+	});
 
+	//密码绑定回车
+	$("#pwd").keydown(function(event) {
+		if(event.keyCode===13){
+			ajaxLoginConfrim();
+		}
+	});
 	// 设置翻页按钮行为
 	$("#hotsongpre").attr({
 		onclick: '',
@@ -23,6 +38,7 @@ $("windows").ready(function windowsReady () {
 
 	ajaxGetHistory()
 })
+
 
 //显示加载器  
 function showLoader() {  
