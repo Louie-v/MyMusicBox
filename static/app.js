@@ -3,12 +3,24 @@
  */
 
 $("windows").ready(function windowsReady () {
-	$(".pausebtn").attr({
+	//初始化按钮
+	$(".pausebtn").each(function() {
+		$(this).attr({
 			onclick: 'ajaxPauseMusic()'
 		});
-	$(".playbtn").attr({
+	});
+
+	$(".playbtn").each(function() {
+		$(this).attr({
 			onclick: 'ajaxPlayMusic()'
 		});
+	});
+	// $(".pausebtn").attr({
+	// 		onclick: 'ajaxPauseMusic()'
+	// 	});
+	// $(".playbtn").attr({
+	// 		onclick: 'ajaxPlayMusic()'
+	// 	});
 	//设置两个输入框焦点
 	$("#searchinput").focus();
 	$("#pwd").focus();
@@ -25,17 +37,23 @@ $("windows").ready(function windowsReady () {
 			ajaxLoginConfrim();
 		}
 	});
-	// 设置翻页按钮行为
-	$("#hotsongpre").attr({
-		onclick: '',
-	});
-	$("#hotsongnext").attr({
-		onclick: 'HotSongNext(2)',
-	});
-	// 设置上、下一曲按钮行为
-	$(".nextbtn").attr('onclick', 'ajaxNextSong()');
-	$(".prevbtn").attr('onclick', 'ajaxPrevSong()');
 
+	// 设置上、下一曲按钮行为
+	$(".nextbtn").each(function() {
+		$(this).attr({
+			onclick: 'ajaxNextSong()'
+		});
+	});
+
+	$(".prevbtn").each(function() {
+		$(this).attr({
+			onclick: 'ajaxPrevSong()'
+		});
+	});
+	// $(".nextbtn").attr('onclick', 'ajaxNextSong()');
+	// $(".prevbtn").attr('onclick', 'ajaxPrevSong()');
+	
+	//初始化播放列表
 	ajaxGetHistory()
 })
 
@@ -75,11 +93,22 @@ function ajaxPlayMusic (musicSid) {
 		})
 		.done(function() {
 			ajaxGetSong(musicSid);
-			$(".playbtn").html("正在播放");
-			$(".pausebtn").html("暂停");
-			$(".pausebtn").attr({
-				onclick: 'ajaxPauseMusic()',
+			$(".playbtn").each(function() {
+				$(this).html("正在播放");
 			});
+
+			$(".pausebtn").each(function() {
+				$(this).html("暂停");
+				$(this).attr({
+					onclick: "ajaxPauseMusic()"
+				});
+			});
+
+			// $(".playbtn").html("正在播放");
+			// $(".pausebtn").html("暂停");
+			// $(".pausebtn").attr({
+			// 	onclick: 'ajaxPauseMusic()',
+			// });
 			// 增加插入列表，解决下载后才更新数据库，导致数据不同步
 			releasePlayList(musicSid);
 
@@ -113,11 +142,21 @@ function listPlayMusic (musicSid) {
 		})
 		.done(function() {
 			ajaxGetSong(musicSid);
-			$(".playbtn").html("正在播放");
-			$(".pausebtn").html("暂停");
-			$(".pausebtn").attr({
-				onclick: 'ajaxPauseMusic()',
+			$(".playbtn").each(function() {
+				$(this).html("正在播放");
 			});
+
+			$(".pausebtn").each(function() {
+				$(this).html("暂停");
+				$(this).attr({
+					onclick: 'ajaxPauseMusic()'
+				});
+			});
+			// $(".playbtn").html("正在播放");
+			// $(".pausebtn").html("暂停");
+			// $(".pausebtn").attr({
+			// 	onclick: 'ajaxPauseMusic()',
+			// });
 			hideLoader();
 		})
 		.fail(function() {
@@ -388,15 +427,35 @@ function ajaxPauseMusic () {
 	})
 	.done(function() {
 		// 设置播放按钮行为
-		$(".playbtn").attr({
-			onclick: 'ajaxUnPauseMusic()'
+		// 
+		$(".playbtn").each(function() {
+			$(this).attr({
+				onclick: 'ajaxUnPauseMusic()'
+			});
 		});
-		$(".playbtn").html("继续播放");
-		// 设置暂停按钮行为
-		$(".pausebtn").html("已暂停");
-		$(".pausebtn").attr({
-			onclick: ''
+
+		$(".playbtn").each(function() {
+			$(this).html('继续播放');
 		});
+
+		$(".pausebtn").each(function() {
+			$(this).html("已暂停");
+		});
+
+		$(".pausebtn").each(function() {
+			$(this).attr({
+				onclick: ''
+			});
+		});
+		// $(".playbtn").attr({
+		// 	onclick: 'ajaxUnPauseMusic()'
+		// });
+		// $(".playbtn").html("继续播放");
+		// // 设置暂停按钮行为
+		// $(".pausebtn").html("已暂停");
+		// $(".pausebtn").attr({
+		// 	onclick: ''
+		// });
 	})
 	.fail(function() {
 		console.log("error");
@@ -420,15 +479,35 @@ function ajaxUnPauseMusic () {
 	})
 	.done(function() {
 		console.log("success");
-		$(".playbtn").html("正在播放");
-		$(".playbtn").attr({
-			onclick: ''
+		$(".playbtn").each(function() {
+			$(this).html("正在播放");
 		});
-		// 还原暂停按钮功能
-		$(".pausebtn").html("暂停");
-		$(".pausebtn").attr({
-			onclick: 'ajaxPauseMusic()'
+
+		$(".playbtn").each(function() {
+			$(this).attr({
+				onclick: ''
+			});
 		});
+
+		//还原暂停按钮功能
+		$(".pausebtn").each(function() {
+			$(this).html("暂停");
+		});
+
+		$(".pausebtn").each(function() {
+			$(this).attr({
+				onclick: 'ajaxPauseMusic()'
+			});
+		});
+		// $(".playbtn").html("正在播放");
+		// $(".playbtn").attr({
+		// 	onclick: ''
+		// });
+		// // 还原暂停按钮功能
+		// $(".pausebtn").html("暂停");
+		// $(".pausebtn").attr({
+		// 	onclick: 'ajaxPauseMusic()'
+		// });
 	})
 	.fail(function() {
 		console.log("error");
@@ -806,10 +885,23 @@ function ajaxDelSong (sid) {
 		console.log('success');
 		if (req['result']==true){
 			alert("删除成功！");
-			$(".playbtn").html("请选择歌曲");
-			$(".playbtn").attr('onclick', '');
-			$(".pausebtn").html("暂停");
-			$(".pausebtn").attr('onclick', '');
+			$(".playbtn").each(function() {
+				$(this).html("请选择歌曲");
+				$(this).attr({
+					onclick: ''
+				});
+			});
+
+			$(".pausebtn").each(function() {
+				$(this).html("暂停");
+				$(this).attr({
+					onclick: ''
+				});
+			});
+			// $(".playbtn").html("请选择歌曲");
+			// $(".playbtn").attr('onclick', '');
+			// $(".pausebtn").html("暂停");
+			// $(".pausebtn").attr('onclick', '');
 			ajaxGetHistory();
 
 		}else{
@@ -847,6 +939,21 @@ function ajaxDelAllSong () {
 				$("#artist").html('');
 				$("#song_name").html('');
 				$("#album_picurl").attr('onclick', '');
+
+				$(".playbtn").each(function() {
+					$(this).html("请选择歌曲");
+					$(this).attr({
+						onclick: ''
+					});
+				});
+
+				$(".pausebtn").each(function() {
+					$(this).html("暂停");
+					$(this).attr({
+						onclick: ''
+					});
+				});
+				
 				ajaxGetHistory();
 
 			}else{

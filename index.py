@@ -524,7 +524,7 @@ class AjaxListHandler(tornado.web.RequestHandler):
     def get(self):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
-        req_tmp=NetEase.top_playlists(limit=100)
+        req_tmp=NetEase.top_playlists(limit=200)
         req=NetEase.dig_info(req_tmp,"top_playlists")
         self.write(tornado.escape.json_encode(req))
 
