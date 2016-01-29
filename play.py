@@ -120,21 +120,23 @@ class Play(MusicData):
         except pygame.error:
             print("File {} error! {}".format(music_path, pygame.get_error()))
             return
+        print "self.playNum:",self.playNum
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy():
             clock.tick(30)
         self.playFlag=False
     # search by api and get info
-    def search_music_info(self, sid):
+    def search_music_info(self, sid, mode=0):
         NetEase = api.NetEase()
         music_info = NetEase.dig_info(NetEase.song_detail(sid),"songs")
-        music_info=music_info[0]
+        music_info = music_info[0]
         down_res = self.download_music(music_info['mp3_url'],sid)
         if down_res:
             MusicData.set_music_info( self, music_info )
             self.relPlayListAndCount()
-
-            self.playNum=self.playList.index(int(sid))
+            #跳过添加歌曲时更新播放序号
+            if mode == 0:
+                self.playNum=self.playList.index(int(sid))
             return str(music_info['song_id'])
         else:
             return

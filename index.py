@@ -413,7 +413,7 @@ class AjaxAddSongHandler(tornado.web.RequestHandler):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
         req={'sid':self.get_argument("sid"),}
-        res_temp=player.search_music_info(req['sid'])
+        res_temp=player.search_music_info(req['sid'], mode=1)
         if res_temp:
             res = True
             player.relPlayListAndCount()
