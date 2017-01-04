@@ -52,7 +52,7 @@
 #树莓派设置说明
 1. 由于raspbian在安装后就没有用过图形界面，一直是用TTL或SSH,在使用过程中发现一个问题，树莓派默认是声音没有开到最大，直接使用就会出现声音很小的情况。调整代码`amixer sset PCM 98%`
 2. 另由于程序使用到了关机，所以要用root权限。而每次开机用SSH去启动又太麻烦。
-3. 最后，把`amixer sset PCM 98%`和`sudo python ~/mymusicbox/index.py`添加到/etc/init.d/rc.local 的最后
+3. 最后，把`amixer sset PCM 98%`和`python ~/mymusicbox/index.py`添加到/etc/init.d/rc.local 的最后
 
 
 # License

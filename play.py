@@ -97,6 +97,8 @@ class Play(MusicData):
         musicSid = MusicData.get_music_info(self, sid)
         if not musicSid:
             musicSid = self.search_music_info(sid)
+        else:
+            self.playNum=self.playList.index(int(sid))
 
         print 'current play music sid: ', sid
         item = threading.Thread(target=self.playPopen, args=(sid,), name="player")
@@ -228,10 +230,6 @@ class Play(MusicData):
             else:
                 self.playNum = 0
             sid = self.playList[self.playNum]
-            musicSid = MusicData.get_music_info(self, sid)
-            if not musicSid:
-                musicSid = self.search_music_info(sid)
-
             self.play_music(sid)
             return self.playList[self.playNum]
         else:
@@ -250,10 +248,6 @@ class Play(MusicData):
                 self.playNum = self.musicCount - 1
 
             sid = self.playList[self.playNum]
-            musicSid = MusicData.get_music_info(self, sid)
-            if not musicSid:
-                musicSid = self.search_music_info(sid)
-
             self.play_music(sid)
             return self.playList[self.playNum]
         else:
