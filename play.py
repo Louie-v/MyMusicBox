@@ -3,11 +3,10 @@
 
 __author__ = 'Louie.v (Check.vv@gmail.com)'
 
-import pygame
 import threading
 import time
 import os
-
+import subprocess
 
 import wget
 
@@ -37,147 +36,162 @@ class MusicData(object):
             return False
 
 class Play(MusicData):
-    abs_path = os.path.abspath('./')
-    musicCount = 0
-    playList = []
-    playNum = 0
-    playFlag = True
-    shutdownFlag=False
-    shutdownTime=0
-    def __init__ (self):
-        self.is_playing = False
-        self.music_option = {
-            'frequence' : 44100,
-            'bitsize' : -16,
-            'channels' : 1,
-            'buffer' : 2048,
+    '''
+    播放音乐
+    使用subprprocess和mpg123进行音乐的后台播放
+    '''
+    def __init__(self):
+        self.music_info = {
+            'sid': '',
+            'name': '',
+            'md5': '',
+            'mp3Url': '',
+            'path': '',
         }
-        self.music_info={
-            'sid' : '',
-            'name' : '',
-            'md5' : '',
-            'mp3Url' : '',
-            'path' :'',
-        }
+        self.abs_path = os.path.abspath('./')
+        self.musicCount = 0
+        self.playList = []
+        self.playNum = 0
+        self.playFlag = False
+        self.shutdownFlag = False
+        self.shutdownTime = 0
+        self.popenHandler = None
+        self.volume = 100
+        self.pause_flag = False
+
         # 初始化播放列表
         self.relPlayListAndCount()
+        #启动定时器
+        self.sdTimerThread()
 
 
-        print self.playList
-        print self.musicCount
-
-        self.playTimerThread()
-        # setting pygame
-        pygame.mixer.init( self.music_option['frequence'], self.music_option['bitsize'], self.music_option['channels'], self.music_option['buffer'])
-        pygame.mixer.music.set_volume(1)
-
-    def playTimerThread(self):
-        pTimer=threading.Thread(target=self.playTimer,name="playTimer")
+    def sdTimerThread(self):
+        pTimer = threading.Thread(target=self.sdTimer, name="sdTimer")
         threads.append(pTimer)
         pTimer.start()
-
-    def playTimer(self):
+    #定时器进程函数
+    def sdTimer(self):
         while 1:
             # 循环播放
-            if self.playFlag == False:
+            # 判断条件还需要再调整
+            if self.playFlag == False and self.popenHandler:
                 time.sleep(1)
                 self.nextMusic()
                 time.sleep(2)
-
             # 定时关机
-            if self.shutdownFlag==True:
-                sdTime=self.shutdownTime-time.time()
-                print "system will shutdown in ",int(sdTime/60),":",int(sdTime%60)
+            if self.shutdownFlag == True:
+                sdTime = self.shutdownTime - time.time()
+                print "system will shutdown in ", int(sdTime / 60), ":", int(sdTime % 60)
                 if self.shutdownTime <= time.time():
                     os.system("shutdown -h now")
-                    self.shutdownFlag=False
-
+                    self.shutdownFlag = False
             time.sleep(1)
-    # play music
-    def play_music(self, sid):
-        print 'current play music sid: ',sid
-        item = threading.Thread( target=self.play_music_thread, args=( sid,), name="player" )
-        threads.append( item )
-        item.start()
 
-    # play threading
-    def play_music_thread(self,sid):
+    def play_music(self, sid):
+        '''
+        播放
+        '''
+        if self.playFlag == True:
+                self.musicStop()
+        # 判断歌曲是否已下载
         musicSid = MusicData.get_music_info(self, sid)
         if not musicSid:
             musicSid = self.search_music_info(sid)
         else:
-            # 更新当前播放的歌曲号
             self.playNum=self.playList.index(int(sid))
 
-        # play now
-    	clock = pygame.time.Clock()
-        music_path=self.abs_path+"/music/"+musicSid+'.mp3'
+        print 'current play music sid: ', sid
+        item = threading.Thread(target=self.playPopen, args=(sid,), name="player")
+        threads.append(item)
+        item.start()
 
-        try:
-            pygame.mixer.music.load(music_path)
-            print("Music file {} loaded!".format(music_path))
-            self.playFlag=True
-        except pygame.error:
-            print("File {} error! {}".format(music_path, pygame.get_error()))
-            return
-        print "self.playNum:",self.playNum
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            clock.tick(30)
-        self.playFlag=False
-    # search by api and get info
+    # 播放音乐子进程
+    def playPopen(self,mSid):
+        self.popenHandler = subprocess.Popen(["mpg123", "-R"],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        self.popenHandler.stdin.write(b'V ' + str(self.volume).encode('u8') + b'\n')
+        if mSid:
+            songPath = self.abs_path + "/music/" + str(mSid) + '.mp3'
+            print("Music file {} loaded!".format(songPath))
+            self.popenHandler.stdin.write(b'L ' + songPath.encode('u8') + b'\n')
+            self.playFlag = True
+            while True:
+                strout = self.popenHandler.stdout.readline().decode('u8')
+                # 播放结束
+                if strout == '@P 0\n':
+                    self.playFlag = False
+                    break
+        else:
+            pass
+        return
+
+    # 获取歌曲信息并下载
     def search_music_info(self, sid, mode=0):
         NetEase = api.NetEase()
-        music_info = NetEase.dig_info(NetEase.song_detail(sid),"songs")
+        music_info = NetEase.dig_info(NetEase.song_detail(sid), "songs")
         music_info = music_info[0]
-        down_res = self.download_music(music_info['mp3_url'],sid)
+        down_res = self.download_music(music_info['mp3_url'], sid)
         if down_res:
-            MusicData.set_music_info( self, music_info )
+            MusicData.set_music_info(self, music_info)
             self.relPlayListAndCount()
-            #跳过添加歌曲时更新播放序号
+            # 跳过添加歌曲时更新播放序号
             if mode == 0:
-                self.playNum=self.playList.index(int(sid))
+                self.playNum = self.playList.index(int(sid))
             return str(music_info['song_id'])
         else:
             return
-    # download
-    def download_music(self, url,sid):
 
+    # download
+    def download_music(self, url, sid):
         file_path = self.abs_path + '/music/'
-        music_path = file_path+str(sid)+".mp3"
-        if not os.path.exists( file_path ):
+        music_path = file_path + str(sid) + ".mp3"
+        if not os.path.exists(file_path):
             try:
-                os.makedirs( file_path )
+                os.makedirs(file_path)
             except:
                 print '权限不足，无法创建目录...'
         else:
             pass
         # 下载
         try:
-            music = wget.download(url,music_path)
+            music = wget.download(url, music_path)
             print music
             return music
         except:
             print '下载出错...'
 
-
     def setVolume(self, value):
-        try:
-            pygame.mixer.music.set_volume( float(value) )
-            return value
-        except:
-            return False
-        pass
+        value = float(value) * 100
+        if value > 100:
+            value = 100
+        if value < 0:
+            value = 0
+        # try:
+        if self.playFlag == True:
+            self.popenHandler.stdin.write(b'V ' + str(value).encode('u8') + b'\n')
+            self.popenHandler.stdin.flush()
+        self.volume = value
+        return value
+
     def pause_music(self):
+        '''
+        暂停音乐
+        '''
         try:
-            pygame.mixer.music.pause()
-            return True
+            self.pause_flag = True
+            self.popenHandler.stdin.write(b'P\n')
+            self.popenHandler.stdin.flush()
         except:
             return False
         pass
+
     def unPauseMusic(self):
+        '''
+        恢复播放
+        '''
         try:
-            pygame.mixer.music.unpause()
+            self.pause_flag = False
+            self.popenHandler.stdin.write(b'P\n')
+            self.popenHandler.stdin.flush()
             return True
         except:
             return False
@@ -187,7 +201,7 @@ class Play(MusicData):
         统计数据库总歌曲数
         '''
         try:
-            mCount=db.count_db()
+            mCount = db.count_db()
             return mCount
         except:
             return False
@@ -196,59 +210,69 @@ class Play(MusicData):
         '''
         获取数据库播放列表
         '''
-        templist=[]
+        templist = []
         try:
-            list=db.select_all()
-            for i in range(0,len(list)):
+            list = db.select_all()
+            for i in range(0, len(list)):
                 templist.append(list[i][0])
             return templist
         except:
-          return False
+            return False
 
     def nextMusic(self):
         '''
         播放下一曲
         '''
+        self.musicStop()
         if self.musicCount > 0:
-            if self.playNum < self.musicCount-1:
-                self.playNum = self.playNum+1
+            if self.playNum < self.musicCount - 1:
+                self.playNum = self.playNum + 1
             else:
                 self.playNum = 0
-
-            self.play_music(self.playList[self.playNum])
-            return  self.playList[self.playNum]
+            sid = self.playList[self.playNum]
+            self.play_music(sid)
+            return self.playList[self.playNum]
         else:
-            return 110
+            self.musicStop()
+            return -1
 
     def prevMusic(self):
         '''
         播放上一曲
         '''
-        # 播放列表为空 不响应
+        self.musicStop()
         if self.musicCount > 0:
             if self.playNum > 0:
-                self.playNum = self.playNum-1
+                self.playNum = self.playNum - 1
             else:
-                self.playNum = self.musicCount-1
+                self.playNum = self.musicCount - 1
 
-            self.play_music(self.playList[self.playNum])
-            return  self.playList[self.playNum]
+            sid = self.playList[self.playNum]
+            self.play_music(sid)
+            return self.playList[self.playNum]
         else:
-            return 110
-
+            self.musicStop()
+            return -1
 
     def relPlayListAndCount(self):
-        musicCount=self.mCount()
+        musicCount = self.mCount()
         if musicCount:
-            self.musicCount=musicCount[0][0]
-            self.playList=self.getPlaylist()
+            self.musicCount = musicCount[0][0]
+            self.playList = self.getPlaylist()
 
+    def musicStop(self):
+        '''
+        停止播放进程
+        '''
+        self.playFlag = False
+        self.popenHandler.stdin.write(b'Q\n')
+        self.popenHandler.stdin.flush()
+        try:
+            self.popenHandler.kill()
+        except OSError as e:
+            print e
+            return -1
 
 if __name__ == "__main__":
     play = Play()
-    play.play_music(32548853)
-
-
-
-
-
+    play.playPopen('32619804')
