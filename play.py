@@ -97,6 +97,8 @@ class Play(MusicData):
         musicSid = MusicData.get_music_info(self, sid)
         if not musicSid:
             musicSid = self.search_music_info(sid)
+            if -1 == musicSid:
+               return -1
         else:
             self.playNum=self.playList.index(int(sid))
 
@@ -130,7 +132,7 @@ class Play(MusicData):
         music_info = NetEase.dig_info(NetEase.song_detail(sid), "songs")
         music_info = music_info[0]
         down_res = self.download_music(music_info['mp3_url'], sid)
-        if down_res:
+        if -1 != down_res:
             MusicData.set_music_info(self, music_info)
             self.relPlayListAndCount()
             # 跳过添加歌曲时更新播放序号
@@ -138,7 +140,7 @@ class Play(MusicData):
                 self.playNum = self.playList.index(int(sid))
             return str(music_info['song_id'])
         else:
-            return
+            return -1
 
     # download
     def download_music(self, url, sid):
@@ -158,6 +160,7 @@ class Play(MusicData):
             return music
         except:
             print '下载出错...'
+            return -1
 
     def setVolume(self, value):
         value = float(value) * 100

@@ -167,8 +167,12 @@ class AjaxPlayMusicHandler(tornado.web.RequestHandler):
     def post(self):
         self.set_header("Accept-Charset", "utf-8")
         req = { 'sid':self.get_argument("sid"),}
-        player.play_music( req['sid'] )
-        self.write( tornado.escape.json_encode( {'result': True, 'info': 'play now...！！' } ) )
+        res = player.play_music( req['sid'] )
+        if -1 != res:
+            self.write( tornado.escape.json_encode( {'result': True, 'info': 'play now...！！' } ) )
+        else:
+            self.write(tornado.escape.json_encode({'result': False, 'info': 'Failed！！'}))
+
 # 登录网易云
 class AjaxLoginHandler(tornado.web.RequestHandler):
     def initialize(self):
@@ -391,7 +395,7 @@ class AjaxDelAllSongHandler(tornado.web.RequestHandler):
     def post(self):
         res=db.delete_all()
         if res==True:
-            player.pause_music()
+            player.musicStop()
 
             # 更新播放数据
             player.relPlayListAndCount()
@@ -413,12 +417,16 @@ class AjaxAddSongHandler(tornado.web.RequestHandler):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
         req={'sid':self.get_argument("sid"),}
+        if req['sid'] in player.playList:
+            self.write(tornado.escape.json_encode({'result': 2}))
+            return
+
         res_temp=player.search_music_info(req['sid'], mode=1)
-        if res_temp:
-            res = True
+        if -1 != res_temp:
+            res = 1
             player.relPlayListAndCount()
         else:
-            res=False
+            res = -1
         self.write( tornado.escape.json_encode({'result':res} ))
 
 # 下一曲

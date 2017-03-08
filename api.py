@@ -12,6 +12,8 @@ import re
 import json
 import requests
 import hashlib
+import base64
+import random
 from bs4 import BeautifulSoup
 
 top_list_all={
@@ -44,6 +46,42 @@ def uniq(arr):
     arr2 = list(set(arr))
     arr2.sort(key=arr.index)
     return arr2
+
+# 歌曲加密算法, 基于https://github.com/yanunon/NeteaseCloudMusic脚本实现
+
+def encrypted_id(id):
+    magic = bytearray('3go8&$8*3*3h0k(2)2', 'u8')
+    song_id = bytearray(id, 'u8')
+    magic_len = len(magic)
+    for i, sid in enumerate(song_id):
+        song_id[i] = sid ^ magic[i % magic_len]
+    m = hashlib.md5(song_id)
+    result = m.digest()
+    result = base64.b64encode(result)
+    result = result.replace(b'/', b'_')
+    result = result.replace(b'+', b'-')
+    return result.decode('u8')
+
+# 获取高音质mp3 url
+def geturl(song):
+    if song['hMusic']:
+        music = song['hMusic']
+        quality = 'HD'
+    elif song['mMusic']:
+        music = song['mMusic']
+        quality = 'MD'
+    elif song['lMusic']:
+        music = song['lMusic']
+        quality = 'LD'
+    else:
+        return song['mp3Url'], ''
+
+    quality = quality + ' {0}k'.format(music['bitrate'] // 1000)
+    dfsId = str(music['dfsId'])
+    enc_id = encrypted_id(dfsId)
+    url = 'http://m%s.music.126.net/%s/%s.mp3' % (random.randrange(1, 3),
+                                                  enc_id, dfsId)
+    return url, quality
 
 
 default_timeout = 10
@@ -331,14 +369,17 @@ class NetEase:
         temp = []
         if dig_type == 'songs':
             for i in range(0, len(data)):
+                url, quality = geturl(data[i])
                 song_info = {
                     'song_id': data[i]['id'],
                     'artist': [],
                     'song_name': data[i]['name'],
                     'album_name': data[i]['album']['name'],
-                    'mp3_url': data[i]['mp3Url'],
-                    'album_picurl':data[i]['album']['blurPicUrl']
+                    'mp3_url': url,
+                    'album_picurl': data[i]['album']['blurPicUrl'],
+                    'quality': quality
                 }
+
                 if 'artist' in data[i]:
                     song_info['artist'] = data[i]['artist']
                 elif 'artists' in data[i]:

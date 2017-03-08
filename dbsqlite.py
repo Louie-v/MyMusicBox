@@ -24,6 +24,7 @@ class DbSqlite():
                 "artist"  TEXT(40),
                 "album_name"  TEXT(40),
                 "album_picurl"  TEXT(200),
+                "quality"  TEXT(20),
                 CONSTRAINT "listid" UNIQUE ("id" ASC),
                 CONSTRAINT "songid" UNIQUE ("songid" ASC)
                 );
@@ -107,11 +108,11 @@ class DbSqlite():
             '''
             插入数据
             '''
-            sqlDate=(dataDic["song_id"],dataDic["song_name"],dataDic["mp3_url"],dataDic["artist"],dataDic["album_name"],dataDic["album_picurl"])
+            sqlDate=(dataDic["song_id"],dataDic["song_name"],dataDic["mp3_url"],dataDic["artist"],dataDic["album_name"],dataDic["album_picurl"],dataDic['quality'])
             try:
                 conn=sqlite3.connect(dbName)
                 cr=conn.cursor()
-                cr.execute('''insert into plist ("songid","songname","mp3url","artist","album_name","album_picurl") values (?,?,?,?,?,?)''',sqlDate)
+                cr.execute('''insert into plist ("songid","songname","mp3url","artist","album_name","album_picurl","quality") values (?,?,?,?,?,?,?)''',sqlDate)
                 conn.commit()
                 fe=cr.fetchall()
                 cr.close()
