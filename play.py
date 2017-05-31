@@ -91,8 +91,7 @@ class Play(MusicData):
         '''
         播放
         '''
-        if self.playFlag == True:
-                self.musicStop()
+
         # 判断歌曲是否已下载
         musicSid = MusicData.get_music_info(self, sid)
         if not musicSid:
@@ -101,6 +100,9 @@ class Play(MusicData):
                return -1
         else:
             self.playNum=self.playList.index(int(sid))
+
+        if self.playFlag == True:
+                self.musicStop()
 
         print 'current play music sid: ', sid
         item = threading.Thread(target=self.playPopen, args=(sid,), name="player")
@@ -131,8 +133,13 @@ class Play(MusicData):
         NetEase = api.NetEase()
         music_info = NetEase.dig_info(NetEase.song_detail(sid), "songs")
         music_info = music_info[0]
-        down_res = self.download_music(music_info['mp3_url'], sid)
+        #获取mp3_url
+        urlobj = api.GetUrl()
+        url = urlobj.getUrl(sid)
+        down_res = self.download_music(url, sid)
         if -1 != down_res:
+            #更新mp3_url
+            music_info['mp3_url'] = url
             MusicData.set_music_info(self, music_info)
             self.relPlayListAndCount()
             # 跳过添加歌曲时更新播放序号

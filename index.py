@@ -14,7 +14,7 @@ import time
 
 
 import base64
-import uuid  
+import uuid
 
 
 from tornado.escape import json_encode
@@ -30,7 +30,7 @@ global player
 
 player = play.Play()
 db=DbSqlite()
-define("port", default=80, help="run on the given port", type=int)
+define("port", default=8080, help="run on the given port", type=int)
 
 NetEase = api.NetEase()
 
@@ -44,7 +44,7 @@ class Application(tornado.web.Application):
             (r"/shutdown", ShutdownHandler),
             # (r"/song.html", GetSongHandler),
 
-            
+
             #for ajax
             # (r"/ajaxGetAlbum", AjaxGetAlbumHandler),
             (r"/ajaxSearch", AjaxSearchHandler),
@@ -73,8 +73,8 @@ class Application(tornado.web.Application):
             (r"/ajaxList", AjaxListHandler),
             (r"/ajaxClassesGetSongList", AjaxClassesGetSongListHandler),
 
-        ] 
-        
+        ]
+
         settings = dict(
             cookie_secret=base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
             base_path=os.path.join(os.path.dirname(__file__), ""),
@@ -185,7 +185,7 @@ class AjaxLoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
         NetEase.refresh()
-        req = { 'user':self.get_argument("user"), 'pass':self.get_argument("pass") } 
+        req = { 'user':self.get_argument("user"), 'pass':self.get_argument("pass") }
         res = NetEase.login(  req['user'], req['pass'] )
         self.write( tornado.escape.json_encode(res['profile']) )
 # 获取音乐信息
@@ -200,7 +200,7 @@ class AjaxGetSongHandler(tornado.web.RequestHandler):
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
         NetEase.refresh()
-        req = { 'sid':self.get_argument("sid") } 
+        req = { 'sid':self.get_argument("sid") }
         res_temp = NetEase.song_detail( req['sid'] )
         res=NetEase.dig_info(res_temp,'songs')
         self.write( tornado.escape.json_encode(res) )
@@ -216,7 +216,7 @@ class AjaxGetAlbumHandler(tornado.web.RequestHandler):
     def get(self):
         self.set_header("Accept-Charset", "utf-8")
         NetEase.refresh()
-        req = { 'aid':self.get_argument("aid") } 
+        req = { 'aid':self.get_argument("aid") }
         res_temp = NetEase.album( req['aid'] )
         res = NetEase.dig_info(res_temp,'songs')
         self.write( tornado.escape.json_encode(res) )
@@ -417,7 +417,7 @@ class AjaxAddSongHandler(tornado.web.RequestHandler):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
         req={'sid':self.get_argument("sid"),}
-        if req['sid'] in player.playList:
+        if (int(req['sid']) in player.playList):
             self.write(tornado.escape.json_encode({'result': 2}))
             return
 
@@ -513,7 +513,7 @@ class AjaxChangePwdHandler(tornado.web.RequestHandler):
     def get(self):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
-        cookie=self.get_secure_cookie('admin') 
+        cookie=self.get_secure_cookie('admin')
         if cookie  == 'admin':
             req={'nowpwd':self.get_argument("nowpwd"), 'newpwd': self.get_argument("newpwd")}
             res=db.change_pwd(req['nowpwd'],req['newpwd'])
@@ -560,5 +560,4 @@ def main():
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":
-    main() 
-
+    main()

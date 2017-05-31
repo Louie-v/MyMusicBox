@@ -54,9 +54,18 @@ $("windows").ready(function windowsReady () {
 	// $(".prevbtn").attr('onclick', 'ajaxPrevSong()');
 	
 	//初始化播放列表
-	ajaxGetHistory()
+	ajaxGetHistory();
+
+
+	//定时获取播放状态
+	var playInfo = self.setInterval("getPlayInfo()",1000);
 })
 
+//定时获取播放状态函数功能实现
+//---todo--------------------------
+function getPlayInfo(){
+	console.log("test");
+}
 
 //显示加载器  
 function showLoader() {  
@@ -857,10 +866,10 @@ function ajaxreleasePlayListDb (sid) {
 				releasePlayList(sid);
 				console.log("success");
 			}
-			else(req['result'] == -1){
+			if(req['result'] == -1){
 				alert('添加失败');
 			}
-			else(req['result'] == 2){
+			if(req['result'] == 2){
 				alert("歌曲已存在");
 			}
 			hideLoader();

@@ -1,4 +1,4 @@
-#!/usr/local/Cellar/python
+#!/usr/local/python
 # -*- coding: utf-8 -*-
 
 
@@ -9,6 +9,7 @@
 '''
 __author__ = "Louie.v (Check.vv@gmail.com)"
 import re
+import os
 import json
 import requests
 import hashlib
@@ -16,6 +17,9 @@ import base64
 import random
 from bs4 import BeautifulSoup
 
+from Crypto.Cipher import AES
+import  rsa
+import binascii
 top_list_all={
     0:['云音乐新歌榜','/discover/toplist?id=3779629'],
     1:['云音乐热歌榜','/discover/toplist?id=3778678'],
@@ -46,42 +50,42 @@ def uniq(arr):
     arr2 = list(set(arr))
     arr2.sort(key=arr.index)
     return arr2
-
-# 歌曲加密算法, 基于https://github.com/yanunon/NeteaseCloudMusic脚本实现
-
-def encrypted_id(id):
-    magic = bytearray('3go8&$8*3*3h0k(2)2', 'u8')
-    song_id = bytearray(id, 'u8')
-    magic_len = len(magic)
-    for i, sid in enumerate(song_id):
-        song_id[i] = sid ^ magic[i % magic_len]
-    m = hashlib.md5(song_id)
-    result = m.digest()
-    result = base64.b64encode(result)
-    result = result.replace(b'/', b'_')
-    result = result.replace(b'+', b'-')
-    return result.decode('u8')
-
-# 获取高音质mp3 url
-def geturl(song):
-    if song['hMusic']:
-        music = song['hMusic']
-        quality = 'HD'
-    elif song['mMusic']:
-        music = song['mMusic']
-        quality = 'MD'
-    elif song['lMusic']:
-        music = song['lMusic']
-        quality = 'LD'
-    else:
-        return song['mp3Url'], ''
-
-    quality = quality + ' {0}k'.format(music['bitrate'] // 1000)
-    dfsId = str(music['dfsId'])
-    enc_id = encrypted_id(dfsId)
-    url = 'http://m%s.music.126.net/%s/%s.mp3' % (random.randrange(1, 3),
-                                                  enc_id, dfsId)
-    return url, quality
+#
+# # 歌曲加密算法, 基于https://github.com/yanunon/NeteaseCloudMusic脚本实现
+#
+# def encrypted_id(id):
+#     magic = bytearray('3go8&$8*3*3h0k(2)2', 'u8')
+#     song_id = bytearray(id, 'u8')
+#     magic_len = len(magic)
+#     for i, sid in enumerate(song_id):
+#         song_id[i] = sid ^ magic[i % magic_len]
+#     m = hashlib.md5(song_id)
+#     result = m.digest()
+#     result = base64.b64encode(result)
+#     result = result.replace(b'/', b'_')
+#     result = result.replace(b'+', b'-')
+#     return result.decode('u8')
+#
+# # 获取高音质mp3 url
+# def geturl(song):
+#     if song['hMusic']:
+#         music = song['hMusic']
+#         quality = 'HD'
+#     elif song['mMusic']:
+#         music = song['mMusic']
+#         quality = 'MD'
+#     elif song['lMusic']:
+#         music = song['lMusic']
+#         quality = 'LD'
+#     else:
+#         return song['mp3Url'], ''
+#
+#     quality = quality + ' {0}k'.format(music['bitrate'] // 1000)
+#     print music
+#     dfsId = str(music['dfsId'])
+#     enc_id = encrypted_id(dfsId)
+#     url = 'http://m%s.music.126.net/%s/%s.mp3' % (random.randrange(1, 3),enc_id, dfsId)
+#     return url, quality
 
 
 default_timeout = 10
@@ -124,25 +128,25 @@ class NetEase:
                 headers=self.header,
                 timeout=default_timeout,
                 cookies=self.cookies,
-            ) 
+            )
         self.saveCookie(connection)
         connection.encoding = "UTF-8"
         return connection.text
 
     #保存cookie
     def saveCookie(self, conn):
-        try :  
+        try :
             type ( conn.cookies['__csrf'] )
         except :
             pass
-        else: 
+        else:
             self.cookies['__csrf'] = conn.cookies['__csrf']
 
-        try :  
+        try :
             type ( conn.cookies['NETEASE_WDA_UID'] )
         except :
             pass
-        else: 
+        else:
             self.cookies['NETEASE_WDA_UID'] = conn.cookies['NETEASE_WDA_UID']
 
     # 登录
@@ -194,7 +198,7 @@ class NetEase:
 
     # 搜索单曲(1)，歌手(100)，专辑(10)，歌单(1000)，用户(1002) *(type)*
     def search(self, s, stype=1, offset=0, total='true', limit=60):
-        action = 'http://music.163.com/api/search/get/web' 
+        action = 'http://music.163.com/api/search/get/web'
         print self.cookies
         data = {
             's': s,
@@ -369,15 +373,14 @@ class NetEase:
         temp = []
         if dig_type == 'songs':
             for i in range(0, len(data)):
-                url, quality = geturl(data[i])
                 song_info = {
                     'song_id': data[i]['id'],
                     'artist': [],
                     'song_name': data[i]['name'],
                     'album_name': data[i]['album']['name'],
-                    'mp3_url': url,
+                    'mp3_url': '',
                     'album_picurl': data[i]['album']['blurPicUrl'],
-                    'quality': quality
+                    'quality': ''
                 }
 
                 if 'artist' in data[i]:
@@ -465,3 +468,78 @@ class NetEase:
                 temp.append(song_info)
 
         return temp
+
+class GetUrl:
+    def __init__(self):
+        self.header = {
+            'Accept':'*/*',
+            'Accept-Encoding':'gzip, deflate',
+            'Accept-Language':'zh-CN,zh;q=0.8',
+            'Cache-Control':'no-cache',
+            'Connection':'keep-alive',
+            'Content-Type':'application/x-www-form-urlencoded',
+            'Host':'music.163.com',
+            'Origin':'http://music.163.com',
+            'Pragma':'no-cache',
+            'Referer':'http://music.163.com/',
+            'User-Agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+        }
+        self.keys={
+            'songText' : {
+                'ids':'',
+                'br':128000,
+                'csrf_token':''
+            },
+            'first_key': '0CoJUm6Qyw8W8jud',
+            'second_key': self.get_secondkey(16), #random
+            'rsa_modulus': '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7',
+            'rsa_exp': '010001',
+            'iv':'0102030405060708',
+            'encSecKey': ''
+        }
+        self.url='http://music.163.com/weapi/song/enhance/player/url?csrf_token='
+
+    def get_params(self, songid, bitrate=128000):
+        text ='{' + '\"ids\":\"[' + str(songid) + ']\",\"br\":'+str(bitrate)+',\"csrf_token\":\"\"}'
+        h_encText = self.AES_encrypt(text, self.keys['first_key'], self.keys['iv'])
+        h_encText = self.AES_encrypt(h_encText, self.keys['second_key'], self.keys['iv'])
+        return h_encText
+
+    def AES_encrypt(self, text, key, iv):
+        pad = 16 - len(text) % 16
+        text = text + pad * chr(pad)
+        encryptor = AES.new(key, AES.MODE_CBC, iv)
+        encrypt_text = encryptor.encrypt(text)
+        encrypt_text = base64.b64encode(encrypt_text)
+        return encrypt_text
+
+    def cal_url(self,url, params, encSecKey):
+        data = {
+            "params": params,
+            "encSecKey": encSecKey
+        }
+        response = requests.post(url, headers=self.header, data=data)
+        return response.content
+
+    def getUrl(self,songid):
+        a = self.cal_url(self.url,self.get_params(songid),self.get_encSecKey(self.keys['second_key']))
+        if 0 != len(a):
+            a = json.loads(a)
+            return a['data'][0]['url']
+        return -1
+
+    def calcEncSecKey(self,text):
+        text1 = text[::-1]
+        rs = pow(int(binascii.hexlify(text1), 16), int(self.keys['rsa_exp'], 16), int(self.keys['rsa_modulus'], 16))
+        return format(rs, 'x').zfill(256)
+
+    def get_encSecKey(self,text):
+        self.keys['encSecKey'] = self.calcEncSecKey(text)
+        return self.keys['encSecKey']
+
+    def get_secondkey(self,len):
+        return binascii.hexlify(os.urandom(len))[:16]
+
+if __name__ == "__main__":
+    url = GetUrl()
+    url.getUrl(479422013)
