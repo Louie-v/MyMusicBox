@@ -58,14 +58,33 @@ $("windows").ready(function windowsReady () {
 
 
 	//定时获取播放状态
-	var playInfo = self.setInterval("getPlayInfo()",1000);
+	var playInfo = self.setInterval("ajaxGetPlayInfo()",3000);
 })
 
 //定时获取播放状态函数功能实现
 //---todo--------------------------
-function getPlayInfo(){
-	console.log("test");
+function ajaxGetPlayInfo(){
+	$.ajax({
+		url: '/ajaxGetPlayInfo',
+		type: 'GET',
+		dataType: 'json',
+	})
+	.done(function(res) {
+		if(res['song_id']){
+			ajaxGetSong(res['song_id']);
+		}else{
+			console.log("success");
+		}
+	})
+	.fail(function() {
+
+	})
+	.always(function() {
+
+	});
+	
 }
+
 
 //显示加载器  
 function showLoader() {  
@@ -550,6 +569,11 @@ function ajaxGetSong (sid) {
 		$("#artist").html(req[0]['artist']);
 		$("#song_name").html(req[0]['song_name']);
 		$("#album_picurl").attr('onclick', 'ajaxPlayMusic(\''+req[0]['song_id']+'\')');
+		// 清空颜色标识 
+		$('#playlist  a[style]').removeAttr('style');
+		// 更新新的播放歌曲的颜色标识
+		$('#'+req[0]['song_id']).attr('style', 'color:#399de6;');
+
 	})
 	.fail(function() {
 		console.log("error");
@@ -799,7 +823,7 @@ function ajaxGetHistory () {
 		var result=res;
 		var html='';
 		for (var i =0; i <result.length; i++) {
-			html+='<li class="li'+i+'"><a href="#dialog" data-rel="dialog" data-transition="none" onclick="ajaxDialogGetSong(\''+result[i]['song_id']+'\')">'+result[i]["song_name"]+'  |  '+result[i]['artist']+'</a><a href="#" data-theme="b" onclick="listPlayMusic(\''+result[i]['song_id']+'\')"></a></li>'
+			html+='<li class="li'+i+'"><a id="' + result[i]['song_id']+'" href="#dialog" data-rel="dialog" data-transition="none" onclick="ajaxDialogGetSong(\''+result[i]['song_id']+'\')">'+result[i]["song_name"]+'  |  '+result[i]['artist']+'</a><a href="#" data-theme="b" onclick="listPlayMusic(\''+result[i]['song_id']+'\')"></a></li>'
 		};
 		$("#playlist").html(html);
 		$("#playlist").listview("refresh");
@@ -832,7 +856,7 @@ function releasePlayList (sid) {
 		// 重复插入判断
 		if(html.indexOf(sid.toString())<0){
 
-		html+='<li class="li'+999+'"><a href="#dialog" data-rel="dialog" data-transition="none" onclick="ajaxDialogGetSong(\''+result[0]['song_id']+'\')">'+result[0]["song_name"]+'  |  '+result[0]['artist']+'</a><a href="#" data-theme="b" onclick="listPlayMusic(\''+result[0]['song_id']+'\')"></a></li>';
+		html+='<li class="li'+999+'"><a id="' + result[0]['song_id']+'" href="#dialog" data-rel="dialog" data-transition="none" onclick="ajaxDialogGetSong(\''+result[0]['song_id']+'\')">'+result[0]["song_name"]+'  |  '+result[0]['artist']+'</a><a href="#" data-theme="b" onclick="listPlayMusic(\''+result[0]['song_id']+'\')"></a></li>';
 		$("#playlist").html(html);
 		$("#playlist").listview("refresh");
 	}

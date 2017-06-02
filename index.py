@@ -30,7 +30,7 @@ global player
 
 player = play.Play()
 db=DbSqlite()
-define("port", default=8080, help="run on the given port", type=int)
+define("port", default=80, help="run on the given port", type=int)
 
 NetEase = api.NetEase()
 
@@ -72,6 +72,7 @@ class Application(tornado.web.Application):
             (r"/ajaxChangePwd", AjaxChangePwdHandler),
             (r"/ajaxList", AjaxListHandler),
             (r"/ajaxClassesGetSongList", AjaxClassesGetSongListHandler),
+            (r"/ajaxGetPlayInfo", AjaxGetPlayInfoHandler),
 
         ]
 
@@ -84,6 +85,8 @@ class Application(tornado.web.Application):
             debug=True,
         )
         tornado.web.Application.__init__(self, handlers, **settings)
+        #显示 IP
+        os.system("ifconfig")
 
 
 ################################## html ############################################
@@ -527,8 +530,6 @@ class AjaxListHandler(tornado.web.RequestHandler):
     def initialize(self):
         '''database init'''
         self.sid = self.get_secure_cookie("sid")
-        #self.data = session.get(self.sid)
-        #self.set_secure_cookie("sid",self.data['_id'])
     def get(self):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
@@ -541,14 +542,29 @@ class AjaxClassesGetSongListHandler(tornado.web.RequestHandler):
     def initialize(self):
         '''database init'''
         self.sid = self.get_secure_cookie("sid")
-        #self.data = session.get(self.sid)
-        #self.set_secure_cookie("sid",self.data['_id'])
     def get(self):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
         req_tmp={'playlist_id':self.get_argument("playlist_id")}
         req=NetEase.dig_info(NetEase.playlist_detail(req_tmp['playlist_id']),"songs")
         self.write(tornado.escape.json_encode(req))
+
+#定时获取当前播放的信息
+class AjaxGetPlayInfoHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        self.sid = self.get_secure_cookie("sid")
+    def get(self):
+        cookie = self.get_secure_cookie('admin')
+        if cookie == 'admin':
+            if player.playFlag and player.nextflag:
+                sid = player.playList[player.playNum]
+                player.nextflag = False #更新完成下一首歌曲，清空标识
+                self.write(tornado.escape.json_encode({'song_id': sid,}))
+            else:
+                self.write('')
+
+    def post(self):
+        self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
 
 def base_url(path):
     return "http://127.0.0.1/"+path

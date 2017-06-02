@@ -59,6 +59,8 @@ class Play(MusicData):
         self.volume = 100
         self.pause_flag = False
 
+        self.nextflag = False #自动一下曲标识
+
         # 初始化播放列表
         self.relPlayListAndCount()
         #启动定时器
@@ -77,6 +79,7 @@ class Play(MusicData):
             if self.playFlag == False and self.popenHandler:
                 time.sleep(1)
                 self.nextMusic()
+                self.nextflag = True
                 time.sleep(2)
             # 定时关机
             if self.shutdownFlag == True:

@@ -16,7 +16,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="shutdown" data-role="button" class="ui-btn-left" data-transition="slide">管理</a>
 		<h1>导航</h1>
-		<a href="#player" data-role="button" class="ui-btn-right" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" class="ui-btn-right" data-transition="slide">列表</a>
 	</div>
 
 	<div data-role="content" data-theme="b">
@@ -51,13 +51,13 @@
 <div data-role="page" id="player" data-theme="b">
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
-		<h1>播放器</h1>
+		<h1>播放列表</h1>
 		<a href="#" data-role="button" onclick="ajaxDelAllSong()">删除所有</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 	<!-- 专辑图片 -->
 		<div  style="width:100% ;text-align:center;margin-left: auto;margin-right: auto;">
-			<img id="album_picurl" src="static/123.jpg" style="width:40%;">
+			<img id="album_picurl" src="static/123.jpg" style="width:40%;border-radius:50%;">
 		</div>
 		<span>歌手:</span><a id="artist" href="" data-role="button" data-inline="true" data-mini="true"></a>
 		<br>
@@ -90,7 +90,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1 id="topsongtitle">排行榜</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="hotsonglist" data-role="listview" data-inset="true">
@@ -114,7 +114,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1>艺术家</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="artistslist" data-role="listview" data-inset="true">
@@ -138,7 +138,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1>新碟上架</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="albumslist" data-role="listview" data-inset="true">
@@ -162,7 +162,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1>DJ节目</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="djlist" data-role="listview" data-inset="true">
@@ -186,7 +186,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1>最新歌单</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="classeslist" data-role="listview" data-inset="true">
@@ -210,7 +210,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1 id="songs_title">歌曲列表</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="songslist" data-role="listview" data-inset="true">
@@ -234,7 +234,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1>专辑</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 	<!-- 专辑图片 -->
@@ -269,7 +269,7 @@
 
 	<div data-role="content">
 		<div  style="width:100% ;text-align:center;margin-left: auto;margin-right: auto;">
-			<img id="dialog_album_picurl" src="static/123.jpg" style="width:40%;">
+			<img id="dialog_album_picurl" src="static/123.jpg" style="width:40%;border-radius:50%;">
 		</div>	
 		<span>歌手:</span><a id="dialog_artist" href="" data-role="button" data-inline="true" data-mini="true"></a>
 		<br>
@@ -291,7 +291,7 @@
 
 	<div data-role="content">
 		<div  style="width:100% ;text-align:center;margin-left: auto;margin-right: auto;">
-			<img id="songDialog_album_picurl" src="static/123.jpg" style="width:40%;">
+			<img id="songDialog_album_picurl" src="static/123.jpg" style="width:40%;border-radius:50%;">
 		</div>	
 		<span>歌手:</span><a id="songDialog_artist" href="" data-role="button" data-inline="true" data-mini="true"></a>
 		<br>
@@ -309,7 +309,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:history.go(-1)" data-role="button">返回</a>
 		<h1>热门歌单列表</h1>
-		<a href="#player" data-role="button" data-transition="slide">播放器</a>
+		<a href="#player" data-role="button" data-transition="slide">列表</a>
 	</div>	
 	<div data-role="content" data-theme="b">
 		<ul id="hotsongsortlist" data-role="listview" data-inset="true">

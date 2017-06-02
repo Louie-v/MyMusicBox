@@ -210,10 +210,11 @@ if __name__ == "__main__":
         'mp3_url':"""http://m1.music.126.net/NEl-rP7FHqjScMRA9HchfQ==/7886796906996700.mp3""",
         'artist':"Aimer",
         'album_name':"Brave Shine",
-        'album_picurl':"http://p4.music.126.net/EnZBXon5cZWLPHEn2cHMFQ==/2940094094533735.jpg"
+        'album_picurl':"http://p4.music.126.net/EnZBXon5cZWLPHEn2cHMFQ==/2940094094533735.jpg",
+        'quality': ''
     })
     db.select_all()
-    db.select_db(str(2222))
+    print db.select_db(str(32358694))
 
 
 
