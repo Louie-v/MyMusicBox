@@ -469,6 +469,9 @@ class NetEase:
 
         return temp
 
+
+#参考了的分析结果 http://blog.csdn.net/Ciiiiiing/article/details/62434438
+#参与了关于RSA解密代码 https://github.com/darknessomi/musicbox
 class GetUrl:
     def __init__(self):
         self.header = {
