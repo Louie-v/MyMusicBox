@@ -906,7 +906,7 @@ function ajaxreleasePlayListDb (sid) {
 			hideLoader();
 		});
 	}else{
-		alert("MusicSid is NULL");
+		alert("请选择歌曲");
 	}
 	
 }

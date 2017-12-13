@@ -396,17 +396,16 @@ class AjaxDelAllSongHandler(tornado.web.RequestHandler):
     def get(self):
         self.write( tornado.escape.json_encode( {'result': False, 'info': '拒绝GET请求！！' } ) )
     def post(self):
+        if player.playFlag:
+            player.musicStop()
         res=db.delete_all()
         if res==True:
-            player.musicStop()
-
             # 更新播放数据
             player.relPlayListAndCount()
             player.playNum=0
             self.write( tornado.escape.json_encode({'result':True} ))
         else:
             self.write( tornado.escape.json_encode({'result':False}) )
-
 
 
 # 添加歌曲到列表

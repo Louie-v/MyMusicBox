@@ -344,11 +344,11 @@ class NetEase:
 
     # 今日最热（0）, 本周最热（10），历史最热（20），最新节目（30）
     def djchannels(self, stype=0, offset=0, limit=50):
-        action = 'http://music.163.com/discover/djchannel?type=' + str(stype) + '&offset=' + str(offset) + '&limit=' + str(limit)+'&csrf_token='+self.cookies['__csrf']
+        action = 'http://music.163.com/discover/djradio?type={}&offset={}&limit={}'.format( stype, offset, limit)
         try:
             connection = requests.get(action, headers=self.header, timeout=default_timeout)
             connection.encoding = 'UTF-8'
-            channelids = re.findall(r'/dj\?id=(\d+)', connection.text)
+            channelids = re.findall(r'/program\?id=(\d+)', connection.text)
             channelids = uniq(channelids)
             return self.channel_detail(channelids)
         except:
@@ -471,7 +471,7 @@ class NetEase:
 
 
 #参考了的分析结果 http://blog.csdn.net/Ciiiiiing/article/details/62434438
-#参与了关于RSA解密代码 https://github.com/darknessomi/musicbox
+#参考了关于RSA解密代码 https://github.com/darknessomi/musicbox
 class GetUrl:
     def __init__(self):
         self.header = {
