@@ -906,7 +906,7 @@ function ajaxreleasePlayListDb (sid) {
 			hideLoader();
 		});
 	}else{
-		alert("请选择歌曲");
+		alert("请选择歌曲 ");
 	}
 	
 }

@@ -297,6 +297,7 @@ class AjaxDjChannelsHandler(tornado.web.RequestHandler):
     def post(self):
         self.set_header("Accept-Charset", "utf-8")
         NetEase.refresh()
+
         req = { 'stype':self.get_argument("stype"),'offset': self.get_argument("offset"), 'limit': self.get_argument("limit") }
         res = NetEase.djchannels(req['stype'], req['offset'],req['limit'] )
         self.write( tornado.escape.json_encode(res) )
