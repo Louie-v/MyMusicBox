@@ -57,6 +57,14 @@
 2. 另由于程序使用到了关机，所以要用root权限。而每次开机用SSH去启动又太麻烦。
 3. 最后，把`amixer sset PCM 98%`和`python ~/mymusicbox/index.py`添加到/etc/init.d/rc.local 的最后
 
+#包
+1. tornado
+2. base64
+3. wget
+4. requests
+5. BeautifulSoup
+6. pycrypto
+7. 使用到了mpg123进行mp3播放，请先进行安装！
 
 # License
 
