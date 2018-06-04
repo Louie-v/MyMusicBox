@@ -62,7 +62,7 @@
 2. base64
 3. wget
 4. requests
-5. BeautifulSoup
+5. bs4
 6. pycrypto
 7. 使用到了mpg123进行mp3播放，请先进行安装！
 
