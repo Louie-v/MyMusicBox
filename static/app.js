@@ -929,6 +929,12 @@ function ajaxDelSong (sid) {
 		console.log('success');
 		if (req['result']==true){
 			alert("删除成功！");
+
+			$("#album_picurl").attr('src', 'static/123.jpg');
+			$("#artist").html('');
+			$("#song_name").html('');
+			$("#album_picurl").attr('onclick', '');
+
 			$(".playbtn").each(function() {
 				$(this).html("请选择歌曲");
 				$(this).attr({
