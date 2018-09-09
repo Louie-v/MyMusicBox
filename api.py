@@ -485,12 +485,13 @@ class GetUrl:
             'Origin':'http://music.163.com',
             'Pragma':'no-cache',
             'Referer':'http://music.163.com/',
-            'User-Agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+            'User-Agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+            'Cookie':'_ntes_nnid=3bd6e15ef23e87c626bccea55f5a6f9d,1535518160430;expires=Fri, 05 Aug 2118 06:03:36 GMT; path=/; domain=.163.com; _ntes_nuid=3bd6e15ef23e87c626bccea55f5a6f9d;expires=Fri, 05 Aug 2118 06:03:36 GMT; path=/; domain=.163.com'
         }
         self.keys={
             'songText' : {
                 'ids':'',
-                'br':128000,
+                'br':320000,
                 'csrf_token':''
             },
             'first_key': '0CoJUm6Qyw8W8jud',
@@ -502,8 +503,9 @@ class GetUrl:
         }
         self.url='http://music.163.com/weapi/song/enhance/player/url?csrf_token='
 
-    def get_params(self, songid, bitrate=128000):
+    def get_params(self, songid, bitrate=320000):
         text ='{' + '\"ids\":\"[' + str(songid) + ']\",\"br\":'+str(bitrate)+',\"csrf_token\":\"\"}'
+        print text
         h_encText = self.AES_encrypt(text, self.keys['first_key'], self.keys['iv'])
         h_encText = self.AES_encrypt(h_encText, self.keys['second_key'], self.keys['iv'])
         return h_encText
@@ -513,7 +515,7 @@ class GetUrl:
         text = text + pad * chr(pad)
         encryptor = AES.new(key, AES.MODE_CBC, iv)
         encrypt_text = encryptor.encrypt(text)
-        encrypt_text = base64.b64encode(encrypt_text)
+        encrypt_text = base64.b64encode(encrypt_text).decode('utf-8')
         return encrypt_text
 
     def cal_url(self,url, params, encSecKey):
@@ -521,7 +523,15 @@ class GetUrl:
             "params": params,
             "encSecKey": encSecKey
         }
+        # h_url = "https://music.163.com"
+        # s = requests.Session()
+
+        # s.get(h_url, headers=self.header)
+
+
+        # response = requests.post(url, headers=self.header, data=data, cookies=cookiesjar)
         response = requests.post(url, headers=self.header, data=data)
+        print response.content
         return response.content
 
     def getUrl(self,songid):
@@ -533,7 +543,7 @@ class GetUrl:
 
     def calcEncSecKey(self,text):
         text1 = text[::-1]
-        rs = pow(int(binascii.hexlify(text1), 16), int(self.keys['rsa_exp'], 16), int(self.keys['rsa_modulus'], 16))
+        rs = pow(int(binascii.hexlify(text1.encode('utf-8')), 16), int(self.keys['rsa_exp'], 16), int(self.keys['rsa_modulus'], 16))
         return format(rs, 'x').zfill(256)
 
     def get_encSecKey(self,text):
