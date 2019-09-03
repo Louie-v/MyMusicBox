@@ -1,5 +1,7 @@
 # 关于  MyMusicBox 
 ---
+#### 迁移
+2019.9.3 从[GitHub](https://github.com/Louie-v/MyMusicBox) 迁移至 GitEe
 #### 效果图
 
 ![](http://7xkdyj.com1.z0.glb.clouddn.com/1.jpg)
